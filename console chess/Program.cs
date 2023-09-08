@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
-//Side 1 is black, side 2 is white
+//Side 2 is black, side 1 is white
 //Notes log:
 //
 //I FUCKING FORGOT ABOUT TAKING PIECES
@@ -63,10 +63,13 @@ namespace Project
 			{
 				if (i % 8 == 0 & i != 0)
 				{
+                    Console.Write(" " + i / 8);
 					Console.WriteLine();
 				}
                 Console.Write(board[i].getIdentifier() + " ");
             }
+            Console.WriteLine(" 8");
+            Console.Write(" a  b  c  d  e  f  g  h");
 		}
 
 		static void SinglePlayerGame(Pieces[] board)
@@ -85,13 +88,28 @@ namespace Project
 
 			//Location of piece to move
 			Console.WriteLine("\nWhite's turn \nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
-			Wresponse_location = Console.ReadLine();
+			square_L = Console.ReadLine();
 
-			square_L = Wresponse_location.Substring(1);
 			//messy way to turn a into 1, b into 2, etc
 			int temp = char.ToUpper(char.Parse(square_L.Substring(0, 1))) - 64;
 			square_L = ((temp - 1) + ((int.Parse(square_L.Substring(1)) - 1) * 8)).ToString();
 
+            if (board[int.Parse(square_L)].getSide() == 1)
+            {
+                Console.WriteLine("The trainer blocked the ball!"); Console.ReadLine(); Console.WriteLine("Don't be a thief!");
+                Console.ReadLine();
+                Console.Clear(); printBoard(board); singleWhiteMove(board); return;
+            }
+            else if (board[int.Parse(square_L)].getSide() == 0)
+            {
+                Console.WriteLine("Press enter to try again");
+                Console.ReadLine();
+                Console.Clear(); printBoard(board);
+                singleWhiteMove(board);
+                return;
+            }
+
+            Console.WriteLine("Selecting " + board[int.Parse(square_L)].getName());
 			//Destination of piece to move
 			Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
 
@@ -104,8 +122,6 @@ namespace Project
 				singleWhiteMove(board);
 				return;
 			}
-			//
-
 		}
 		static void singleBlackMove(Pieces[] board)
 		{
@@ -176,12 +192,12 @@ namespace Project
 			}
 			if (Side == 1)
 			{
-				identifier = identifier.Insert(0, "b");
+				identifier = identifier.Insert(0, "w");
 				side = 1;
 			}
 			else if (Side == 2)
 			{
-				identifier = identifier.Insert(0, "w");
+				identifier = identifier.Insert(0, "b");
 				side = 2;
 			}
 			else if (Side == 0)
@@ -195,6 +211,14 @@ namespace Project
 		{
 			return identifier;
 		}
+        public string getName()
+        {
+            return name;
+        }
+        public int getSide()
+        {
+            return side;
+        }
 
 		public Pieces[] movePawn(Pieces[] board, string piece_L, string location)
 		{
@@ -203,7 +227,7 @@ namespace Project
 
 		public string validMoves(Pieces[] board, int square)
 		{
-			switch (identifier.ToLower())
+			switch (identifier.ToLower().Substring(1, 1))
 			{
 				default:
 					break;
@@ -229,15 +253,15 @@ namespace Project
 		{
             int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 };
             bool emptyPawn = true;
-            if (side == 1) //black
+            if (side == 1) //white
             {
-                if (board[square + 1].identifier.ToLower() == "wp" & board[square + 1].passantAble == true)
+                if (board[square + 1].identifier.ToLower() == "bp" & board[square + 1].passantAble == true)
                 {
                     tempArrayPawn[0] = square - 7;
                     tempArrayPawn[1] = -1;
                     passanting = true;
                 }
-                if (board[square - 1].identifier.ToLower() == "wp" & board[square - 1].passantAble == true)
+                if (board[square - 1].identifier.ToLower() == "bp" & board[square - 1].passantAble == true)
                 {
                     tempArrayPawn[0] = square - 9;
                     tempArrayPawn[1] = -1;
@@ -260,26 +284,26 @@ namespace Project
                     {
                         tempArrayPawn[1] = -1;
                     }
-                    if (board[square - 9].identifier != " -")
+                    if (board[square + 9].identifier != " -")
                     {
-                        tempArrayPawn[3] = square - 9;
+                        tempArrayPawn[2] = square + 9;
                     }
-                    if (board[square - 7].identifier != " -")
+                    if (board[square + 7].identifier != " -")
                     {
-                        tempArrayPawn[4] = square - 7;
+                        tempArrayPawn[3] = square + 7;
                     }
                     tempArrayPawn[0] = square + 8;
                 }
             }
-            else if (side == 2) //white
+            else if (side == 2) //black
             {
-                if (board[square + 1].identifier.ToLower() == "bp" & board[square + 1].passantAble == true)
+                if (board[square + 1].identifier.ToLower() == "wp" & board[square + 1].passantAble == true)
                 {
                     tempArrayPawn[0] = square + 9;
                     tempArrayPawn[1] = -1;
                     passanting = true;
                 }
-                if (board[square - 1].identifier.ToLower() == "bp" & board[square - 1].passantAble == true)
+                if (board[square - 1].identifier.ToLower() == "wp" & board[square - 1].passantAble == true)
                 {
                     tempArrayPawn[0] = square + 7;
                     tempArrayPawn[1] = -1;
@@ -302,13 +326,13 @@ namespace Project
                     {
                         tempArrayPawn[1] = -1;
                     }
-                    if (board[square + 7].identifier != " -")
+                    if (board[square - 7].identifier != " -")
                     {
-                        tempArrayPawn[3] = square + 7;
+                        tempArrayPawn[2] = square - 7;
                     }
-                    if (board[square + 9].identifier != " -")
+                    if (board[square - 9].identifier != " -")
                     {
-                        tempArrayPawn[4] = square + 9;
+                        tempArrayPawn[3] = square - 9;
                     }
                     tempArrayPawn[0] = square - 8;
                 }
