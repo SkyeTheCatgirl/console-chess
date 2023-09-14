@@ -24,6 +24,10 @@ namespace Project
         //and multiple functions that I need to use in various places
         public static Pieces[] board = initBoard();
         public static Pieces emptyTemplate = new Pieces();
+        public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
+        public static int playerColour = 1; //white plays first
+
+        //methods
         public static Pieces[] initBoard()
 		{
 			Pieces[] board = new Pieces[64];
@@ -71,13 +75,12 @@ namespace Project
 		static void Main()
 		{
             Globals.emptyTemplate.assignPiece("empty", 0);
-			int vcchoice;
 			Console.WriteLine("Welcome to Skye's dumb chess NEA project");
 			Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
-			vcchoice = int.Parse(Console.ReadLine());
+			Globals.vcchoice = int.Parse(Console.ReadLine());
 			Console.Clear();
-			if (vcchoice == 1) { SinglePlayerGame(); }
-			else if (vcchoice == 2)
+			if (Globals.vcchoice == 1) { SinglePlayerGame(); }
+			else if (Globals.vcchoice == 2)
 			{
 				Console.WriteLine("                                                  \r\n                        %%#                       \r\n                        %%%%%%######,             \r\n                       ...........#####*          \r\n                     ...............######        \r\n                 /#%*%*..##%%%%%.....##/          \r\n                 ,#%%%&..##%%%%%#.*#####          \r\n                   ,#/,.,,(%(,,...####            \r\n                   . .,,.. , .....%%#/            \r\n                  ..,,,,,.......,%#.,,...         \r\n               #&&&%***#%%%%,%%%%%%..,.           \r\n             .&&&&&%%%%%%%.%%%%%%%%%,             \r\n            /&&&&&%%%%%%%%%%%%%%%%%%.             \r\n            @@@&&%%%%%&&%%%%%%&&&%%,..            \r\n                &%%%%%%&&%%%%***,,,.../           \r\n                 ##.  ....*,,/%&&&%%&%%.          \r\n                   %%&%%&&%%&%%%&&%%&&%%          \r\n               .%%%%&&%%%&%%%&%%%&%%%%%%%%%%,     \r\n            .%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%, \r\n           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
 				Console.WriteLine("\nNot finished yet");
@@ -86,51 +89,67 @@ namespace Project
 		}
 		public static void printBoard()
 		{
+            Random r = new Random();
 			for (int i = 0; i < Globals.board.Length; i++)
 			{
 				if (i % 8 == 0 & i != 0)
 				{
+                    Console.ResetColor();
                     Console.Write(" " + i / 8);
 					Console.WriteLine();
 				}
+                //Console.ForegroundColor = (ConsoleColor)r.Next(1,15);
+                Console.BackgroundColor = (ConsoleColor)r.Next(1,15);
                 Console.Write(Globals.board[i].getIdentifier() + " ");
             }
+            Console.ResetColor();
             Console.WriteLine(" 8");
-            Console.Write(" a  b  c  d  e  f  g  h");
+            Console.Write(" a  b  c  d  e  f  g  h\n");
 		}
 
 		static void SinglePlayerGame()
 		{
-			Console.WriteLine("Starting single player game\n...\n...\n...\n...");
+			Console.WriteLine("Starting single player game");
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine("...");
+                //Thread.Sleep(1000);
+            }
 			printBoard();
 			Console.WriteLine();
-			singleWhiteMove();
+            while (true)
+            {
+			playerMove();
+            }
 		}
 
-		static void singleWhiteMove()
+		static void playerMove()
 		{
 			string square;
             string piece;
             int amtPossMoves;
 
 			//Location of piece to move
-			Console.WriteLine("\nWhite's turn \nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
+            if (Globals.playerColour == 1) { Console.WriteLine("White's turn"); }
+            else if (Globals.playerColour == 2) { Console.WriteLine("Black's turn"); }
+			Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
 			square = Console.ReadLine();
 
 			square = Globals.convLetterToNum(square);
 
-            if (Globals.board[int.Parse(square)].getSide() == 2)
+            if (Globals.board[int.Parse(square)].getSide() != Globals.playerColour & Globals.board[int.Parse(square)].getSide() != 0)
             {
                 Console.Write("The trainer blocked the ball!"); Console.ReadLine(); Console.WriteLine("Don't be a thief! \n(You selected a piece that wasn't yours)");
                 Globals.invalidInput();
-                singleWhiteMove();
+                playerMove();
                 return;
             }
             else if (Globals.board[int.Parse(square)].getSide() == 0)
             {
+                Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine("There's no piece there!");
                 Globals.invalidInput();
-                singleWhiteMove();
+                playerMove();
                 return;
             }
 
@@ -144,7 +163,7 @@ namespace Project
             {
                 Console.WriteLine("This piece can't move anywhere!");
                 Globals.invalidInput();
-                singleWhiteMove();
+                playerMove();
                 return;
             }
 
@@ -153,14 +172,18 @@ namespace Project
             Globals.board[int.Parse(piece)].movePiece(int.Parse(square));
             Globals.board[int.Parse(piece)] = Globals.emptyTemplate;
 
-            Console.WriteLine("\n\n");
-            printBoard();
-            Console.ReadLine();
+            endTurn();
 		}
-		static void singleBlackMove()
-		{
 
-		}
+        static void endTurn()
+        {
+            Console.Clear();
+            printBoard();
+            if (Globals.vcchoice == 1)
+            {
+                Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;
+            }
+        }
 	}
 
 	class Pieces
