@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -127,7 +128,7 @@ namespace Project
 		{
 			string square;
             string piece;
-            int amtPossMoves;
+            List<int> lsPossibleMoves = new List<int>();
 
 			//Location of piece to move
             if (Globals.playerColour == 1) { Console.WriteLine("White's turn"); }
@@ -158,8 +159,8 @@ namespace Project
 			Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
 
             piece = square;
-			amtPossMoves = Globals.board[int.Parse(square)].validMoves(int.Parse(square));
-            if (amtPossMoves == 0) //If there's nowhere the piece can move
+			lsPossibleMoves = Globals.board[int.Parse(square)].validMoves(int.Parse(square));
+            if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
             {
                 Console.WriteLine("This piece can't move anywhere!");
                 Globals.invalidInput();
@@ -169,8 +170,16 @@ namespace Project
 
             square = Globals.convLetterToNum(Console.ReadLine());
 
-            Globals.board[int.Parse(piece)].movePiece(int.Parse(square));
-            Globals.board[int.Parse(piece)] = Globals.emptyTemplate;
+            foreach (var item in lsPossibleMoves)
+            {
+                if (int.Parse(square) == item)
+                {
+                    Globals.board[int.Parse(piece)].movePiece(int.Parse(square));
+                    Globals.board[int.Parse(piece)] = Globals.emptyTemplate;
+                    endTurn();
+                    return;
+                }
+            }
 
             endTurn();
 		}
@@ -274,7 +283,7 @@ namespace Project
         {
             return side;
         }
-		public int validMoves(int square)
+		public List<int> validMoves(int square)
 		{
 			switch (identifier.ToLower().Substring(1, 1))
 			{
@@ -284,109 +293,97 @@ namespace Project
 				case "r": return validateRook(square); //Violent
 				case "n": return validateKnight(square); //Violent
 				case "b": return validateBishop(square); //Violent
-				case "q": return validateRook(square) + validateBishop(square);
+				case "q": return validateRook(square).Concat(validateBishop(square)).ToList();
 				case "k": return validateKing(square); //Violent
 					//Knook
-                case "y": return validateKnight(square) + validateRook(square);
+                case "y": return validateKnight(square).Concat(validateRook(square)).ToList();
 					//Knishop
-				case "z": return validateKnight(square) + validateBishop(square);
+				case "z": return validateKnight(square).Concat(validateBishop(square)).ToList();
 				case "-":
 					Console.WriteLine("Idk how this got activated");
                     break;
 			}
-            return -1;
+            return null;
 		}
-		private int validatePawn(int square)
+		private List<int> validatePawn(int square)
 		{
-            int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 };
+            int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
+            
+            //en passant
+            if (Globals.board[square + 1].passantAble == true)
+            {
+                if (side == 1)
+                {
+                    tempArrayPawn[3] = square + 9;
+                }
+                else if (side == 2)
+                {
+                    tempArrayPawn[3] = square - 9;
+                }
+            }
+            if (Globals.board[square - 1].passantAble == true)
+            {
+                if (side == 1)
+                {
+                    tempArrayPawn[4] = square + 7;
+                }
+                else if (side == 2)
+                {
+                    tempArrayPawn[4] = square - 7;
+                }
+            }
+
+            //moving and taking pieces
             if (side == 1) //white
             {
-                if (Globals.board[square + 1].identifier.ToLower() == "bp" & Globals.board[square + 1].passantAble == true)
+                //moving forward
+                if (Globals.board[square + 8].identifier == " -")
                 {
-                    tempArrayPawn[0] = square - 7;
-                    tempArrayPawn[1] = -1;
-                    passanting = true;
+                tempArrayPawn[0] = square + 8;
+                    if (Globals.board[square + 16].identifier == " -" & hasMoved == false)
+                    {
+                        tempArrayPawn[1] = square + 16;
+                        passantAble = true;
+                        hasMoved = true;
+                    }
                 }
-                if (Globals.board[square - 1].identifier.ToLower() == "bp" & Globals.board[square - 1].passantAble == true)
+
+                if (Globals.board[square + 7].side == 2)
                 {
-                    tempArrayPawn[0] = square - 9;
-                    tempArrayPawn[1] = -1;
-                    passanting = true;
+                    tempArrayPawn[2] = square + 7;
                 }
-                if (Globals.board[square + 8].identifier == " -" & passanting == false)
+                if (Globals.board[square + 9].side == 2)
                 {
-                    if (hasMoved == false)
-                    {
-                        if (Globals.board[square + 8].identifier == " -" & Globals.board[square + 16].identifier == " -")
-                        {
-                            tempArrayPawn[1] = square + 16;
-                        }
-                        else
-                        {
-                            tempArrayPawn[1] = -1;
-                        }
-                    }
-                    else
-                    {
-                        tempArrayPawn[1] = -1;
-                    }
-                    if (Globals.board[square + 9].identifier != " -")
-                    {
-                        tempArrayPawn[2] = square + 9;
-                    }
-                    if (Globals.board[square + 7].identifier != " -")
-                    {
-                        tempArrayPawn[3] = square + 7;
-                    }
-                    tempArrayPawn[0] = square + 8;
+                    tempArrayPawn[3] = square + 9;
                 }
             }
             else if (side == 2) //black
             {
-                if (Globals.board[square + 1].identifier.ToLower() == "wp" & Globals.board[square + 1].passantAble == true)
+                //moving forward
+                if (Globals.board[square - 8].identifier == " -" & hasMoved == false)
                 {
-                    tempArrayPawn[0] = square + 9;
-                    tempArrayPawn[1] = -1;
-                    passanting = true;
-                }
-                if (Globals.board[square - 1].identifier.ToLower() == "wp" & Globals.board[square - 1].passantAble == true)
-                {
-                    tempArrayPawn[0] = square + 7;
-                    tempArrayPawn[1] = -1;
-                    passanting = true;
-                }
-                if (Globals.board[square - 8].identifier == " -" & passanting == false)
-                {
-                    if (hasMoved == false)
-                    {
-                        if (Globals.board[square - 8].identifier == " -" & Globals.board[square - 16].identifier == " -")
-                        {
-                            tempArrayPawn[1] = square - 16;
-                        }
-                        else
-                        {
-                            tempArrayPawn[1] = -1;
-                        }
-                    }
-                    else
-                    {
-                        tempArrayPawn[1] = -1;
-                    }
-                    if (Globals.board[square - 7].identifier != " -")
-                    {
-                        tempArrayPawn[2] = square - 7;
-                    }
-                    if (Globals.board[square - 9].identifier != " -")
-                    {
-                        tempArrayPawn[3] = square - 9;
-                    }
                     tempArrayPawn[0] = square - 8;
+                    if (Globals.board[square - 16].identifier == " -")
+                    {
+                        tempArrayPawn[1] = square - 16;
+                        hasMoved = true;
+                        passantAble = true;
+                    }
+                }
+
+                if (Globals.board[square - 7].side == 1)
+                {
+                    tempArrayPawn[2] = square - 7;
+                }
+                if (Globals.board[square - 9].side == 1)
+                {
+                    tempArrayPawn[3] = square - 9;
                 }
             }
 
            return printPossibleMoves(tempArrayPawn);
         }
-        private int validateRook(int square)
+        private List<int> validateRook(int square)
         {
             int[] tempArrayRook = new int[16];
             int tempValRook1 = square % 8; // horizontal column number, 0,1,2,3, etc. Starts from 0 not 1. the abcs
@@ -491,7 +488,7 @@ namespace Project
 
            return printPossibleMoves(tempArrayRook);
         }
-        private int validateKnight(int square)
+        private List<int> validateKnight(int square)
         {
 
             int[] tempArrayKnight = new int[8];
@@ -534,7 +531,7 @@ namespace Project
 
            return printPossibleMoves(tempArrayKnight);
         }
-        private int validateBishop(int square)
+        private List<int> validateBishop(int square)
         {
 
             int[] tempArrayBishop = new int[28]; for (int i = 0; i < tempArrayBishop.Length; i++) { tempArrayBishop[i] = -1; }
@@ -545,7 +542,7 @@ namespace Project
             //Up Left Diag
             while (loopingCondition)
             {
-                if (square - (9 * BUL) >= 0) //if not too high
+                if (square - (9 * BUL) >= 0 & square % 8 != 0) //if not too high and not at the left edge
                 {
                     if (Globals.board[square - (9 * BUL)].identifier != " -" | blockadeB) //if there's something there
                     {
@@ -578,7 +575,7 @@ namespace Project
             //Up Right Diag
             while (loopingCondition)
             {
-                if (square - (7 * BUR) >= 0) //if not too high
+                if (square - (7 * BUR) >= 0 & square % 8 != 7) //if not too high and not at the right edge
                 {
                     if (Globals.board[square - (7 * BUR)].identifier != " -" | blockadeB)
                     {
@@ -611,7 +608,7 @@ namespace Project
             //Down Left Diag
             while (loopingCondition)
             {
-                if (square + (7 * BDL) < 64) //if not too low
+                if (square + (7 * BDL) < 64 & square % 8 != 0) //if not too low and not at the left edge
                 {
                     if (Globals.board[square + (7 * BDL)].identifier != " -" | blockadeB)
                     {
@@ -644,7 +641,7 @@ namespace Project
             //Down Right Diag
             while (loopingCondition)
             {
-                if (square + (9 * BDR) < 64) //if not too low
+                if (square + (9 * BDR) < 64 & square % 8 != 7) //if not too low and not at the right edge
                 {
                     if (Globals.board[square + (9 * BDR)].identifier != " -" | blockadeB)
                     {
@@ -676,7 +673,7 @@ namespace Project
 
            return printPossibleMoves(tempArrayBishop);
         }
-        private int validateKing(int square)
+        private List<int> validateKing(int square)
         {
             int[] tempArrayKing = new int[8];
             int[] tempArrayDistancesK = new int[8] { -9, -8, -7, -1, 1, 7, 8, 9 };
@@ -715,9 +712,9 @@ namespace Project
 
             return printPossibleMoves(tempArrayKing);
         }
-        private int printPossibleMoves(int[] array)
+        private List<int> printPossibleMoves(int[] array)
         {
-            int amtPossMoves = 0;
+            List<int> curatedList = new List<int>();
             foreach (var item in array)
             {
                 if (item >= 0 & item < 64)
@@ -725,11 +722,11 @@ namespace Project
                     int temp = (item / 8) + 1;
                     string temp1 = Globals.convNumToLetter(item);
                     Console.Write(temp1 + temp.ToString() + " ");
-                    amtPossMoves += 1;
+                    curatedList.Add(item);
                 }
             }
             Console.WriteLine();
-            return amtPossMoves;
+            return curatedList;
         }
 
 
