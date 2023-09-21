@@ -1,15 +1,7 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Data.SqlTypes;
-using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Text;
-
-//Side 2 is black, side 1 is white
+﻿//Side 2 is black, side 1 is white
 //Notes log:
+//En passant is broken
+//
 //Pieces move just doesn't check if they should move to the space. Need to add checking, and taking pieces process, Also the game is currently make 1 move and end, should change that.
 //
 //I FUCKING FORGOT ABOUT TAKING PIECES
@@ -70,6 +62,14 @@ namespace Project
         {
             return Convert.ToChar(number % 8 + 65).ToString().ToLower();
         }
+        public static void funnyStall()
+        {
+            for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine("...");
+                    Thread.Sleep(1000);
+                }
+        }
     }
 	class Program
 	{
@@ -111,11 +111,7 @@ namespace Project
 		static void SinglePlayerGame()
 		{
 			Console.WriteLine("Starting single player game");
-            for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("...");
-                //Thread.Sleep(1000);
-            }
+            Globals.funnyStall();
 			printBoard();
 			Console.WriteLine();
             while (true)
@@ -147,7 +143,6 @@ namespace Project
             }
             else if (Globals.board[int.Parse(square)].getSide() == 0)
             {
-                Console.BackgroundColor = ConsoleColor.Black;
                 Console.WriteLine("There's no piece there!");
                 Globals.invalidInput();
                 playerMove();
@@ -174,14 +169,24 @@ namespace Project
             {
                 if (int.Parse(square) == item)
                 {
+                    Globals.board[int.Parse(piece)].hasMoved = true;
                     Globals.board[int.Parse(piece)].movePiece(int.Parse(square));
                     Globals.board[int.Parse(piece)] = Globals.emptyTemplate;
                     endTurn();
                     return;
                 }
+                else if (item == int.Parse(piece))
+                {
+                    Console.WriteLine("Nuh uh, the piece is already there.");
+                    Globals.invalidInput();
+                    playerMove();
+                    return;
+                }
             }
-
-            endTurn();
+            Console.WriteLine("Nuh uh, the piece can't move there.");
+            Globals.invalidInput();
+            playerMove();
+            return;
 		}
 
         static void endTurn()
@@ -197,11 +202,9 @@ namespace Project
 
 	class Pieces
 	{
-		private int value;
-		private string name;
-		private string identifier;
-		private int side;
-		private bool hasMoved = false; private bool passantAble = false; private bool passanting = false;
+		private int value; private int side; private int killCount;
+		private string name; private string identifier;
+		public bool hasMoved = false; private bool passantAble = false; private bool passanting = false;
 
 		public void assignPiece(string type, int Side)
 		{
@@ -283,6 +286,10 @@ namespace Project
         {
             return side;
         }
+        public int getValue()
+        {
+            return value;
+        }
 		public List<int> validMoves(int square)
 		{
 			switch (identifier.ToLower().Substring(1, 1))
@@ -310,28 +317,33 @@ namespace Project
             int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
             
             //en passant
-            if (Globals.board[square + 1].passantAble == true)
-            {
-                if (side == 1)
-                {
-                    tempArrayPawn[3] = square + 9;
-                }
-                else if (side == 2)
-                {
-                    tempArrayPawn[3] = square - 9;
-                }
-            }
-            if (Globals.board[square - 1].passantAble == true)
-            {
-                if (side == 1)
-                {
-                    tempArrayPawn[4] = square + 7;
-                }
-                else if (side == 2)
-                {
-                    tempArrayPawn[4] = square - 7;
-                }
-            }
+            // if (Globals.board[square + 1].passantAble == true)
+            // {
+            //     Console.WriteLine("En passant is forced");
+            //     passanting = true;
+            //     if (side == 1)
+            //     {
+            //         takePiece(square + 9);
+            //         //tempArrayPawn[2] = square + 9;
+            //     }
+            //     else if (side == 2)
+            //     {
+            //         takePiece(square - 9);
+            //         //tempArrayPawn[2] = square - 9;
+            //     }
+            // }
+            // if (Globals.board[square - 1].passantAble == true)
+            // {
+            //     Console.WriteLine("");
+            //     if (side == 1)
+            //     {
+            //         tempArrayPawn[3] = square + 7;
+            //     }
+            //     else if (side == 2)
+            //     {
+            //         tempArrayPawn[3] = square - 7;
+            //     }
+            // }
 
             //moving and taking pieces
             if (side == 1) //white
@@ -344,7 +356,6 @@ namespace Project
                     {
                         tempArrayPawn[1] = square + 16;
                         passantAble = true;
-                        hasMoved = true;
                     }
                 }
 
@@ -360,13 +371,12 @@ namespace Project
             else if (side == 2) //black
             {
                 //moving forward
-                if (Globals.board[square - 8].identifier == " -" & hasMoved == false)
+                if (Globals.board[square - 8].identifier == " -")
                 {
                     tempArrayPawn[0] = square - 8;
-                    if (Globals.board[square - 16].identifier == " -")
+                    if (Globals.board[square - 16].identifier == " -" & hasMoved == false)
                     {
                         tempArrayPawn[1] = square - 16;
-                        hasMoved = true;
                         passantAble = true;
                     }
                 }
@@ -745,7 +755,25 @@ namespace Project
         }
         private void takePiece(int location)
         {
-
+            killCount += Globals.board[location].getValue();
+            Random random = new Random();
+            //play funny event
+            //pick a number
+            Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
+            if (int.Parse(Console.ReadLine()) == random.Next(1, killCount + 1))
+            {
+                Globals.funnyStall();
+                Console.WriteLine("It worked!");
+                Globals.board[location] = this;
+                Thread.Sleep(1000);
+            }
+            else
+            {
+                Globals.funnyStall();
+                killCount -= Globals.board[location].getValue();
+                Console.WriteLine("It failed!");
+                Thread.Sleep(1000);
+            }
         }
 	}
 }
