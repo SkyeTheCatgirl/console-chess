@@ -9,12 +9,17 @@
 //add unicode chess symbols 🙿 🙾 ♙♘♗♖♕♔♚♛♜♝♞♟
 //fix up moving, currently in a "which horse??" situation, make user select which piece to move and then where to, may have to include some basic move validation
 
-namespace Project
+using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
+
+namespace console_chess
 {
     static class Globals
     {
         //Board variable that is needed throughout the entire code
         //and multiple functions that I need to use in various places
+
+        
         public static Pieces[] board = initBoard();
         public static Pieces emptyTemplate = new Pieces();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
@@ -22,28 +27,28 @@ namespace Project
 
         //methods
         public static Pieces[] initBoard()
-		{
-			Pieces[] board = new Pieces[64];
+        {
+            Pieces[] board = new Pieces[64];
 
-			for (int i = 0; i < board.Length; i++)
-			{
-				board[i] = new Pieces();
-				board[i].assignPiece("empty", 0);
-			}
-			//Black and White backranks
-			board[0].assignPiece("R", 1); board[7].assignPiece("R", 1); board[1].assignPiece("N", 1); board[6].assignPiece("N", 1);
-			board[2].assignPiece("B", 1); board[5].assignPiece("B", 1); board[3].assignPiece("Q", 1); board[4].assignPiece("K", 1);
-			board[56].assignPiece("R", 2); board[63].assignPiece("R", 2); board[57].assignPiece("N", 2); board[62].assignPiece("N", 2);
-			board[58].assignPiece("B", 2); board[61].assignPiece("B", 2); board[59].assignPiece("Q", 2); board[60].assignPiece("K", 2);
-			//Black pawns
-			board[8].assignPiece("P", 1); board[9].assignPiece("P", 1); board[10].assignPiece("P", 1); board[11].assignPiece("P", 1);
+            for (int i = 0; i < board.Length; i++)
+            {
+                board[i] = new Pieces();
+                board[i].assignPiece("empty", 0);
+            }
+            //Black and White backranks
+            board[0].assignPiece("R", 1); board[7].assignPiece("R", 1); board[1].assignPiece("N", 1); board[6].assignPiece("N", 1);
+            board[2].assignPiece("B", 1); board[5].assignPiece("B", 1); board[3].assignPiece("Q", 1); board[4].assignPiece("K", 1);
+            board[56].assignPiece("R", 2); board[63].assignPiece("R", 2); board[57].assignPiece("N", 2); board[62].assignPiece("N", 2);
+            board[58].assignPiece("B", 2); board[61].assignPiece("B", 2); board[59].assignPiece("Q", 2); board[60].assignPiece("K", 2);
+            //Black pawns
+            board[8].assignPiece("P", 1); board[9].assignPiece("P", 1); board[10].assignPiece("P", 1); board[11].assignPiece("P", 1);
             board[12].assignPiece("P", 1); board[13].assignPiece("P", 1); board[14].assignPiece("P", 1); board[15].assignPiece("P", 1);
-			//White pawns
+            //White pawns
             board[48].assignPiece("P", 2); board[49].assignPiece("P", 2); board[50].assignPiece("P", 2); board[51].assignPiece("P", 2);
             board[52].assignPiece("P", 2); board[53].assignPiece("P", 2); board[54].assignPiece("P", 2); board[55].assignPiece("P", 2);
 
             return board;
-		}
+        }
         public static void invalidInput()
         {
             Console.WriteLine("Press enter to try again.");
@@ -54,8 +59,8 @@ namespace Project
         public static string convLetterToNum(string letter)
         {
             //messy way to turn a into 1, b into 2, etc
-			int temp = char.ToUpper(char.Parse(letter.Substring(0, 1))) - 64;
-			letter = ((temp - 1) + ((int.Parse(letter.Substring(1)) - 1) * 8)).ToString();
+            int temp = char.ToUpper(char.Parse(letter.Substring(0, 1))) - 64;
+            letter = ((temp - 1) + ((int.Parse(letter.Substring(1)) - 1) * 8)).ToString();
             return letter;
         }
         public static string convNumToLetter(int number)
@@ -71,34 +76,35 @@ namespace Project
                 }
         }
     }
-	class Program
-	{
-		static void Main()
-		{
+    class Program
+    {
+        static void Main()
+        {
+            
             Globals.emptyTemplate.assignPiece("empty", 0);
-			Console.WriteLine("Welcome to Skye's dumb chess NEA project");
-			Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
-			Globals.vcchoice = int.Parse(Console.ReadLine());
-			Console.Clear();
-			if (Globals.vcchoice == 1) { SinglePlayerGame(); }
-			else if (Globals.vcchoice == 2)
-			{
-				Console.WriteLine("                                                  \r\n                        %%#                       \r\n                        %%%%%%######,             \r\n                       ...........#####*          \r\n                     ...............######        \r\n                 /#%*%*..##%%%%%.....##/          \r\n                 ,#%%%&..##%%%%%#.*#####          \r\n                   ,#/,.,,(%(,,...####            \r\n                   . .,,.. , .....%%#/            \r\n                  ..,,,,,.......,%#.,,...         \r\n               #&&&%***#%%%%,%%%%%%..,.           \r\n             .&&&&&%%%%%%%.%%%%%%%%%,             \r\n            /&&&&&%%%%%%%%%%%%%%%%%%.             \r\n            @@@&&%%%%%&&%%%%%%&&&%%,..            \r\n                &%%%%%%&&%%%%***,,,.../           \r\n                 ##.  ....*,,/%&&&%%&%%.          \r\n                   %%&%%&&%%&%%%&&%%&&%%          \r\n               .%%%%&&%%%&%%%&%%%&%%%%%%%%%%,     \r\n            .%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%, \r\n           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
-				Console.WriteLine("\nNot finished yet");
-			}
+            Console.WriteLine("Welcome to Skye's dumb chess NEA project");
+            Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
+            Globals.vcchoice = int.Parse(Console.ReadLine());
+            Console.Clear();
+            if (Globals.vcchoice == 1) { SinglePlayerGame(); }
+            else if (Globals.vcchoice == 2)
+            {
+                Console.WriteLine("                                                  \r\n                        %%#                       \r\n                        %%%%%%######,             \r\n                       ...........#####*          \r\n                     ...............######        \r\n                 /#%*%*..##%%%%%.....##/          \r\n                 ,#%%%&..##%%%%%#.*#####          \r\n                   ,#/,.,,(%(,,...####            \r\n                   . .,,.. , .....%%#/            \r\n                  ..,,,,,.......,%#.,,...         \r\n               #&&&%***#%%%%,%%%%%%..,.           \r\n             .&&&&&%%%%%%%.%%%%%%%%%,             \r\n            /&&&&&%%%%%%%%%%%%%%%%%%.             \r\n            @@@&&%%%%%&&%%%%%%&&&%%,..            \r\n                &%%%%%%&&%%%%***,,,.../           \r\n                 ##.  ....*,,/%&&&%%&%%.          \r\n                   %%&%%&&%%&%%%&&%%&&%%          \r\n               .%%%%&&%%%&%%%&%%%&%%%%%%%%%%,     \r\n            .%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%, \r\n           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
+                Console.WriteLine("\nNot finished yet");
+            }
             Console.ReadLine();
-		}
-		public static void printBoard()
-		{
+        }
+        public static void printBoard()
+        {
             Random r = new Random();
-			for (int i = 0; i < Globals.board.Length; i++)
-			{
-				if (i % 8 == 0 & i != 0)
-				{
+            for (int i = 0; i < Globals.board.Length; i++)
+            {
+                if (i % 8 == 0 & i != 0)
+                {
                     Console.ResetColor();
                     Console.Write(" " + i / 8);
-					Console.WriteLine();
-				}
+                    Console.WriteLine();
+                }
                 //Console.ForegroundColor = (ConsoleColor)r.Next(1,15);
                 Console.BackgroundColor = (ConsoleColor)r.Next(1,15);
                 Console.Write(Globals.board[i].getIdentifier() + " ");
@@ -106,33 +112,33 @@ namespace Project
             Console.ResetColor();
             Console.WriteLine(" 8");
             Console.Write(" a  b  c  d  e  f  g  h\n");
-		}
+        }
 
-		static void SinglePlayerGame()
-		{
-			Console.WriteLine("Starting single player game");
+        static void SinglePlayerGame()
+        {
+            Console.WriteLine("Starting single player game");
             Globals.funnyStall();
-			printBoard();
-			Console.WriteLine();
+            printBoard();
+            Console.WriteLine();
             while (true)
             {
-			playerMove();
+            playerMove();
             }
-		}
+        }
 
-		static void playerMove()
-		{
-			string square;
+        static void playerMove()
+        {
+            string square;
             string piece;
             List<int> lsPossibleMoves = new List<int>();
 
-			//Location of piece to move
+            //Location of piece to move
             if (Globals.playerColour == 1) { Console.WriteLine("White's turn"); }
             else if (Globals.playerColour == 2) { Console.WriteLine("Black's turn"); }
-			Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
-			square = Console.ReadLine();
+            Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
+            square = Console.ReadLine();
 
-			square = Globals.convLetterToNum(square);
+            square = Globals.convLetterToNum(square);
 
             if (Globals.board[int.Parse(square)].getSide() != Globals.playerColour & Globals.board[int.Parse(square)].getSide() != 0)
             {
@@ -150,11 +156,11 @@ namespace Project
             }
 
             Console.WriteLine("Selecting " + Globals.board[int.Parse(square)].getName());
-			//Destination of piece to move
-			Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
+            //Destination of piece to move
+            Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
 
             piece = square;
-			lsPossibleMoves = Globals.board[int.Parse(square)].validMoves(int.Parse(square));
+            lsPossibleMoves = Globals.board[int.Parse(square)].validMoves(int.Parse(square));
             if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
             {
                 Console.WriteLine("This piece can't move anywhere!");
@@ -187,7 +193,7 @@ namespace Project
             Globals.invalidInput();
             playerMove();
             return;
-		}
+        }
 
         static void endTurn()
         {
@@ -198,86 +204,86 @@ namespace Project
                 Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;
             }
         }
-	}
+    }
 
-	class Pieces
-	{
-		private int value; private int side; private int killCount;
-		private string name; private string identifier;
-		public bool hasMoved = false; private bool passantAble = false; private bool passanting = false;
+    class Pieces
+    {
+        private int value; private int side; private int killCount;
+        private string name; private string identifier;
+        public bool hasMoved = false; private bool passantAble = false; private bool passanting = false;
 
-		public void assignPiece(string type, int Side)
-		{
-			switch (type.ToLower())
-			{
-				default:
-					break;
-				case "r":
-					value = 5;
-					name = "Rook";
-					identifier = "R";
-					break;
-				case "b":
-					value = 3;
-					name = "Bishop";
-					identifier = "B";
-					break;
-				case "n":
-					value = 3;
-					name = "Knight";
-					identifier = "N";
-					break;
-				case "q":
-					value = 9;
-					name = "Queen";
-					identifier = "Q";
-					break;
-				case "k":
-					value = 20;
-					name = "King";
-					identifier = "K";
-					break;
-				case "p":
-					value = 1;
-					name = "Pawn";
-					identifier = "P";
-					break;
-				case "Y": //custom pieces
-					value = 6;
-					name = "Knook";
-					identifier = "Y";
-					break;
-				case "Z":
-					value = 6;
-					name = "Knishop";
-					identifier = "Z";
-					break;
-				case "empty":
-					value = 0;
-					name = "Empty";
-					identifier = "-";
-					break;
-			}
-			if (Side == 1)
-			{
-				identifier = identifier.Insert(0, "w");
-				side = 1;
-			}
-			else if (Side == 2)
-			{
-				identifier = identifier.Insert(0, "b");
-				side = 2;
-			}
-			else if (Side == 0)
-			{
-				identifier = identifier.Insert(0, " ");
-				side = 0;
-			}
-		}
-		public string getIdentifier()
-		{
-			return identifier;
-		}
+        public void assignPiece(string type, int Side)
+        {
+            switch (type.ToLower())
+            {
+                default:
+                    break;
+                case "r":
+                    value = 5;
+                    name = "Rook";
+                    identifier = "R";
+                    break;
+                case "b":
+                    value = 3;
+                    name = "Bishop";
+                    identifier = "B";
+                    break;
+                case "n":
+                    value = 3;
+                    name = "Knight";
+                    identifier = "N";
+                    break;
+                case "q":
+                    value = 9;
+                    name = "Queen";
+                    identifier = "Q";
+                    break;
+                case "k":
+                    value = 20;
+                    name = "King";
+                    identifier = "K";
+                    break;
+                case "p":
+                    value = 1;
+                    name = "Pawn";
+                    identifier = "P";
+                    break;
+                case "Y": //custom pieces
+                    value = 6;
+                    name = "Knook";
+                    identifier = "Y";
+                    break;
+                case "Z":
+                    value = 6;
+                    name = "Knishop";
+                    identifier = "Z";
+                    break;
+                case "empty":
+                    value = 0;
+                    name = "Empty";
+                    identifier = "-";
+                    break;
+            }
+            if (Side == 1)
+            {
+                identifier = identifier.Insert(0, "w");
+                side = 1;
+            }
+            else if (Side == 2)
+            {
+                identifier = identifier.Insert(0, "b");
+                side = 2;
+            }
+            else if (Side == 0)
+            {
+                identifier = identifier.Insert(0, " ");
+                side = 0;
+            }
+        }
+        public string getIdentifier()
+        {
+            return identifier;
+        }
         public string getName()
         {
             return name;
@@ -290,30 +296,30 @@ namespace Project
         {
             return value;
         }
-		public List<int> validMoves(int square)
-		{
-			switch (identifier.ToLower().Substring(1, 1))
-			{
-				default:
-					break;
-				case "p": return validatePawn(square); //Violent
-				case "r": return validateRook(square); //Violent
-				case "n": return validateKnight(square); //Violent
-				case "b": return validateBishop(square); //Violent
-				case "q": return validateRook(square).Concat(validateBishop(square)).ToList();
-				case "k": return validateKing(square); //Violent
-					//Knook
-                case "y": return validateKnight(square).Concat(validateRook(square)).ToList();
-					//Knishop
-				case "z": return validateKnight(square).Concat(validateBishop(square)).ToList();
-				case "-":
-					Console.WriteLine("Idk how this got activated");
+        public List<int> validMoves(int square)
+        {
+            switch (identifier.ToLower().Substring(1, 1))
+            {
+                default:
                     break;
-			}
+                case "p": return validatePawn(square); //Violent
+                case "r": return validateRook(square); //Violent
+                case "n": return validateKnight(square); //Violent
+                case "b": return validateBishop(square); //Violent
+                case "q": return validateRook(square).Concat(validateBishop(square)).ToList();
+                case "k": return validateKing(square); //Violent
+                    //Knook
+                case "y": return validateKnight(square).Concat(validateRook(square)).ToList();
+                    //Knishop
+                case "z": return validateKnight(square).Concat(validateBishop(square)).ToList();
+                case "-":
+                    Console.WriteLine("Idk how this got activated");
+                    break;
+            }
             return null;
-		}
-		private List<int> validatePawn(int square)
-		{
+        }
+        private List<int> validatePawn(int square)
+        {
             int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
             
             //en passant
@@ -391,7 +397,7 @@ namespace Project
                 }
             }
 
-           return printPossibleMoves(tempArrayPawn);
+            return printPossibleMoves(tempArrayPawn);
         }
         private List<int> validateRook(int square)
         {
@@ -496,7 +502,7 @@ namespace Project
                 }
             }
 
-           return printPossibleMoves(tempArrayRook);
+            return printPossibleMoves(tempArrayRook);
         }
         private List<int> validateKnight(int square)
         {
@@ -539,7 +545,7 @@ namespace Project
                 Kcounter++;
             }
 
-           return printPossibleMoves(tempArrayKnight);
+            return printPossibleMoves(tempArrayKnight);
         }
         private List<int> validateBishop(int square)
         {
@@ -681,7 +687,7 @@ namespace Project
                 }
             }
 
-           return printPossibleMoves(tempArrayBishop);
+            return printPossibleMoves(tempArrayBishop);
         }
         private List<int> validateKing(int square)
         {
@@ -775,5 +781,5 @@ namespace Project
                 Thread.Sleep(1000);
             }
         }
-	}
+    }
 }
