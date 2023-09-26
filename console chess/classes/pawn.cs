@@ -2,11 +2,12 @@ using console_chess;
 
 public class pawn : Board
 {
-    public pawn()
+    public pawn(int input)
     {
         value = 1;
         name = "Pawn";
         identifier = "P";
+        side = input;
     }
     protected List<int> validatePawn(int square)
     {
@@ -45,7 +46,7 @@ public class pawn : Board
         if (side == 1) //white
         {
             //moving forward
-            if (Globals.board[square + 8].identifier == " -")
+            if (Globals.board[square + 8] == " -")
             {
             tempArrayPawn[0] = square + 8;
                 if (Globals.board[square + 16].identifier == " -" & hasMoved == false)

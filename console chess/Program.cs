@@ -1,5 +1,7 @@
 ﻿//Side 2 is black, side 1 is white
 //Notes log:
+//Fix oop, array defined as object doesn't work for calling functions
+//
 //En passant is broken
 //
 //Pieces move just doesn't check if they should move to the space. Need to add checking, and taking pieces process, Also the game is currently make 1 move and end, should change that.
@@ -31,18 +33,22 @@ namespace console_chess
             object[] board = new object[64];
 
             //Black and White backranks
-            board[0].assignPiece("R", 1); board[7].assignPiece("R", 1); board[1].assignPiece("N", 1); board[6].assignPiece("N", 1);
-            board[2].assignPiece("B", 1); board[5].assignPiece("B", 1); board[3].assignPiece("Q", 1); board[4].assignPiece("K", 1);
-            board[56].assignPiece("R", 2); board[63].assignPiece("R", 2); board[57].assignPiece("N", 2); board[62].assignPiece("N", 2);
-            board[58].assignPiece("B", 2); board[61].assignPiece("B", 2); board[59].assignPiece("Q", 2); board[60].assignPiece("K", 2);
+            board[0] = new rook(1); board[7] = new rook(1);
+            board[1] = new knight(1); board[6] = new knight(1);
+            board[2]  = new bishop(1); board[5]  = new bishop(1);
+            board[3] = new queen(1); board[4]  = new king(1);
+            board[56]  = new rook(2); board[63] = new rook(2);
+            board[57]  = new knight(2); board[62]  = new knight(2);
+            board[58]  = new bishop(2); board[61]  = new bishop(2);
+            board[59] = new queen(2); board[60] = new king(2);
             
             for (int i = 8; i < 16; i++)
             {
-                board[i] = new pawn();
+                board[i] = new pawn(1);
             }
             for (int i = 48; i < 56; i++)
             {
-                board[i] = new pawn();
+                board[i] = new pawn(2);
             }
             return board;
         }
