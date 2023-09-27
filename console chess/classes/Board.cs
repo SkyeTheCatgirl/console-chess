@@ -10,7 +10,7 @@ namespace console_chess
     //Properties
     protected int value; protected int side; protected int killCount;
     protected string name; protected string identifier;
-
+    
     //Methods
     public string getIdentifier()
     {
@@ -52,5 +52,57 @@ namespace console_chess
     //     return null;
     // }
 
+    protected List<int> printPossibleMoves(int[] array)
+    {
+        List<int> curatedList = new List<int>();
+        foreach (var item in array)
+        {
+            if (item >= 0 & item < 64)
+            {
+                int temp = (item / 8) + 1;
+                string temp1 = Globals.convNumToLetter(item);
+                Console.Write(temp1 + temp.ToString() + " ");
+                curatedList.Add(item);
+            }
+        }
+        Console.WriteLine();
+        return curatedList;
+    }
+
+    // public void movePiece(int location)
+    // {
+    //     //location is where the piece is going to, this method runs from the object that is moving
+
+    //     if (Globals.board[location].getSide() != side & Globals.board[location].getSide() != 0)
+    //     {
+    //         takePiece(location);
+    //     }
+    //     else
+    //     {
+    //         Globals.board[location] = this;
+    //     }
+    // }
+    // private void takePiece(int location)
+    // {
+    //     killCount += Globals.board[location].getValue();
+    //     Random random = new Random();
+    //     //play funny event
+    //     //pick a number
+    //     Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
+    //     if (int.Parse(Console.ReadLine()) == random.Next(1, killCount + 1))
+    //     {
+    //         Globals.funnyStall();
+    //         Console.WriteLine("It worked!");
+    //         Globals.board[location] = this;
+    //         Thread.Sleep(1000);
+    //     }
+    //     else
+    //     {
+    //         Globals.funnyStall();
+    //         killCount -= Globals.board[location].getValue();
+    //         Console.WriteLine("It failed!");
+    //         Thread.Sleep(1000);
+    //     }
+    // }
     }
 }

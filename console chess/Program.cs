@@ -11,6 +11,7 @@
 //add unicode chess symbols 🙿 🙾 ♙♘♗♖♕♔♚♛♜♝♞♟
 //fix up moving, currently in a "which horse??" situation, make user select which piece to move and then where to, may have to include some basic move validation
 
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 
@@ -27,6 +28,12 @@ namespace console_chess
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
 
+
+        public static Func<object, int> mDside = obj =>
+            {
+                MethodInfo method = obj.GetType().GetMethod("getSide");
+                return Convert.ToInt16(method.Invoke(obj, null));
+            };
         //methods
         public static object[] initBoard()
         {
@@ -83,8 +90,6 @@ namespace console_chess
     {
         static void Main()
         {
-            
-            Globals.emptyTemplate.assignPiece("empty", 0);
             Console.WriteLine("Welcome to Skye's dumb chess NEA project");
             Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
             Globals.vcchoice = int.Parse(Console.ReadLine());
