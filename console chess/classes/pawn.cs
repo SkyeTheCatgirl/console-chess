@@ -3,7 +3,7 @@ using console_chess;
 
 public class pawn : Board
 {
-    private bool hasMoved = false;
+    public bool hasMoved = false;
     private bool passantAble = false;
 
     public pawn(int input)
@@ -14,7 +14,7 @@ public class pawn : Board
         side = input;
     }
 
-    protected List<int> validatePawn(int square)
+    public List<int> validatepawn(int square)
     {
         int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
         

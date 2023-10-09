@@ -28,30 +28,6 @@ namespace console_chess
     {
         return value;
     }
-    // public List<int> validMoves(int square)
-    // {
-    //     switch (identifier.ToLower().Substring(1, 1))
-    //     {
-    //         default:
-            
-    //             break;
-    //         case "p": return validatePawn(square); //Violent
-    //         case "r": return validateRook(square); //Violent
-    //         case "n": return validateKnight(square); //Violent
-    //         case "b": return validateBishop(square); //Violent
-    //         case "q": return validateRook(square).Concat(validateBishop(square)).ToList();
-    //         case "k": return validateKing(square); //Violent
-    //             //Knook
-    //         case "y": return validateKnight(square).Concat(validateRook(square)).ToList();
-    //             //Knishop
-    //         case "z": return validateKnight(square).Concat(validateBishop(square)).ToList();
-    //         case "-":
-    //             Console.WriteLine("Idk how this got activated");
-    //             break;
-    //     }
-    //     return null;
-    // }
-
     protected List<int> printPossibleMoves(int[] array)
     {
         List<int> curatedList = new List<int>();
@@ -69,40 +45,40 @@ namespace console_chess
         return curatedList;
     }
 
-    // public void movePiece(int location)
-    // {
-    //     //location is where the piece is going to, this method runs from the object that is moving
+    public void movePiece(int location)
+    {
+        //location is where the piece is going to, this method runs from the object that is moving
 
-    //     if (Globals.board[location].getSide() != side & Globals.board[location].getSide() != 0)
-    //     {
-    //         takePiece(location);
-    //     }
-    //     else
-    //     {
-    //         Globals.board[location] = this;
-    //     }
-    // }
-    // private void takePiece(int location)
-    // {
-    //     killCount += Globals.board[location].getValue();
-    //     Random random = new Random();
-    //     //play funny event
-    //     //pick a number
-    //     Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
-    //     if (int.Parse(Console.ReadLine()) == random.Next(1, killCount + 1))
-    //     {
-    //         Globals.funnyStall();
-    //         Console.WriteLine("It worked!");
-    //         Globals.board[location] = this;
-    //         Thread.Sleep(1000);
-    //     }
-    //     else
-    //     {
-    //         Globals.funnyStall();
-    //         killCount -= Globals.board[location].getValue();
-    //         Console.WriteLine("It failed!");
-    //         Thread.Sleep(1000);
-    //     }
-    // }
+        if (Globals.mDside(Globals.board[location]) != side & Globals.mDside(Globals.board[location]) != 0)
+        {
+            takePiece(location);
+        }
+        else
+        {
+            Globals.board[location] = this;
+        }
+    }
+    private void takePiece(int location)
+    {
+        killCount += Globals.mDvalue(Globals.board[location]);
+        Random random = new Random();
+        //play funny event
+        //pick a number
+        Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
+        if (int.Parse(Console.ReadLine()) == random.Next(1, killCount + 1))
+        {
+            Globals.funnyStall();
+            Console.WriteLine("It worked!");
+            Globals.board[location] = this;
+            Thread.Sleep(1000);
+        }
+        else
+        {
+            Globals.funnyStall();
+            killCount -= Globals.mDvalue(Globals.board[location]);
+            Console.WriteLine("It failed!");
+            Thread.Sleep(1000);
+        }
+    }
     }
 }
