@@ -1,4 +1,5 @@
-﻿//Side 2 is black, side 1 is white
+﻿//test
+//Side 2 is black, side 1 is white
 //Notes log:
 //Fix oop, array defined as object doesn't work for calling functions
 //
