@@ -22,7 +22,7 @@ public class bishop : Board
 
         while (loopingCondition)
         {
-            if (square + (diagDir * distFromBishop) >= 0 & square % 8 != 0) //if not too high and not at the left edge
+            if (square + (diagDir * distFromBishop) >= 0 & (square + (diagDir * distFromBishop) < 64) & square % 8 != 0) //if not too high and not at the left edge
             {
                 if (Globals.board[square + (diagDir * distFromBishop)] != null | blockadeB) //if there's something there
                 {

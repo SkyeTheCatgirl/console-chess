@@ -23,11 +23,10 @@ namespace console_chess
         //Board variable that is needed throughout the entire code
         //and multiple functions that I need to use in various places
         
-        
         public static object[] board = initBoard();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
-         public static object[] parameters = new object[1];
+        public static object[] parameters = new object[1];
 
          //Funcs
          //mD = method delegate
@@ -92,6 +91,19 @@ namespace console_chess
                     return emptyList;
                 }
             };
+        public static Func<object,  object> movePiece = obj =>
+            {
+                if (obj != null)
+                {
+                    MethodInfo method = obj.GetType().GetMethod("movePiece");
+                    return method.Invoke(obj, parameters);
+                }
+                else
+                {
+                    return null;
+                }
+            };
+        
         //methods
         public static object[] initBoard()
         {
@@ -156,7 +168,9 @@ namespace console_chess
             else if (Globals.vcchoice == 2)
             {
                 Console.WriteLine("                                                  \r\n                        %%#                       \r\n                        %%%%%%######,             \r\n                       ...........#####*          \r\n                     ...............######        \r\n                 /#%*%*..##%%%%%.....##/          \r\n                 ,#%%%&..##%%%%%#.*#####          \r\n                   ,#/,.,,(%(,,...####            \r\n                   . .,,.. , .....%%#/            \r\n                  ..,,,,,.......,%#.,,...         \r\n               #&&&%***#%%%%,%%%%%%..,.           \r\n             .&&&&&%%%%%%%.%%%%%%%%%,             \r\n            /&&&&&%%%%%%%%%%%%%%%%%%.             \r\n            @@@&&%%%%%&&%%%%%%&&&%%,..            \r\n                &%%%%%%&&%%%%***,,,.../           \r\n                 ##.  ....*,,/%&&&%%&%%.          \r\n                   %%&%%&&%%&%%%&&%%&&%%          \r\n               .%%%%&&%%%&%%%&%%%&%%%%%%%%%%,     \r\n            .%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%, \r\n           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
-                Console.WriteLine("\nNot finished yet");
+                Console.WriteLine("\nTesting");
+                Console.ReadLine();
+                BotGame();
             }
             Console.ReadLine();
         }
@@ -197,7 +211,20 @@ namespace console_chess
             Console.WriteLine();
             while (true)
             {
-            playerMove();
+                playerMove();
+            }
+        }
+        static void BotGame()
+        {
+            Console.WriteLine("Starting bot game");
+            Globals.funnyStall();
+            printBoard();
+            Console.WriteLine();
+            Console.WriteLine("Player turn");
+            while (true)
+            {
+                playerMove();
+                botMove();
             }
         }
 
@@ -253,8 +280,9 @@ namespace console_chess
             {
                 if (IntSquare == item)
                 {
-                    ((pawn)Globals.board[piece]).hasMoved = true;
-                    //Globals.board[piece].movePiece(IntSquare);
+                    if (Globals.mDname(Globals.board[piece]) == "Pawn") {((pawn)Globals.board[piece]).hasMoved = true;}
+                    Globals.parameters[0] = IntSquare;
+                    Globals.movePiece(Globals.board[piece]);
                     Globals.board[piece] = null;
                     endTurn();
                     return;
@@ -272,6 +300,13 @@ namespace console_chess
             playerMove();
             return;
         }
+        static void botMove()
+        {
+            Console.WriteLine("turn");
+            endTurn();
+            return;
+        }
+
 
         static void endTurn()
         {

@@ -9,7 +9,7 @@ public class king : Board
         identifier = "K";
         side = input;
     }
-    private List<int> validateKing(int square)
+    public List<int> validateking(int square)
     {
         int[] tempArrayKing = new int[8];
         int[] tempArrayDistancesK = new int[8] { -9, -8, -7, -1, 1, 7, 8, 9 };
