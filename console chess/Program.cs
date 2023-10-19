@@ -307,7 +307,7 @@ namespace console_chess
             return;
         }
 
-
+    
         static void endTurn()
         {
             Console.Clear();
