@@ -24,6 +24,7 @@ namespace console_chess
         //and multiple functions that I need to use in various places
         
         public static object[] board = initBoard();
+        public static bot bot = new bot();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
         public static object[] parameters = new object[1];
@@ -307,7 +308,7 @@ namespace console_chess
             return;
         }
 
-    
+
         static void endTurn()
         {
             Console.Clear();
