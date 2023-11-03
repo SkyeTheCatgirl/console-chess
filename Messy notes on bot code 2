@@ -1,0 +1,8 @@
+user selects square
+program checks what piece is on that square
+program runs the validation code for that exact square:
+	e.g. board[square].validate(thepiecetype)
+	code must be run in the context of that piece
+	
+step 1 check what type piece is on that square
+step 2 run the validate moves for that type of piece

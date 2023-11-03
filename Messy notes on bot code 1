@@ -1,0 +1,21 @@
+bot code:
+
+1) Scan all* possible moves
+2) assign each move a value
+3) 
+
+calc all computer moves + all player moves for B-set (2 moves ahead)
+find the highest value board from all possible B-2 boards
+
+
+finds the highest value move for B-1.0 (1.0 meaning board instance 1, computers move) for each comparison of
+
+
+looks at all possible situations for board2. Finds best possible in comparisons of 2. Finds worst possible from results of best possible, the worst move that the player could make. Finds best possible move for board1.
+
+
+Scan X moves ahead (x=2)
+1) scan current original board for all move validations
+2) make byte array that stores position of piece and place it moves to, i.e. the move
+3) for each piece on the board, run its move validation, return list, for each item on list/for each move each piece can take: 1) record position of piece 2) record position of where its gonna move it 3) add the byte array (move) to list.
+At this point we have a list of all the possible moves that can be taken for the original board.
