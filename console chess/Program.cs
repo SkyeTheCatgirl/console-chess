@@ -179,16 +179,31 @@ namespace console_chess
         {
             Random r = new Random();
             int Tside;
+            int counter = 0;
             for (int i = 0; i < Globals.board.Length; i++)
             {
-                if (i % 8 == 0 & i != 0)
+                if (i % 8 == 0 && i != 0)
                 {
                     Console.ResetColor();
                     Console.Write(" " + i / 8);
                     Console.WriteLine();
                 }
                 //Console.ForegroundColor = (ConsoleColor)r.Next(1,15);
-                Console.BackgroundColor = (ConsoleColor)r.Next(1,15);
+                //if ((counter % 16 >= 8 && counter % 2 != 0) ^ counter % 2 == 0)
+                if  (counter % 16 >= 8)
+                {
+                    if (counter % 2 == 0)
+                    {Console.BackgroundColor = ConsoleColor.DarkGray; }
+                    else
+                    {Console.BackgroundColor = ConsoleColor.Green; }
+                }
+                else
+                {
+                    if (counter % 2 != 0)
+                    {Console.BackgroundColor = ConsoleColor.DarkGray; }
+                    else
+                    {Console.BackgroundColor = ConsoleColor.Green; }
+                }
                 Tside = Globals.mDside(Globals.board[i]);
                 switch (Tside)
                 {
@@ -198,6 +213,7 @@ namespace console_chess
                     case 2: Console.Write("b"); break;
                 }
                 Console.Write(Globals.mDid(Globals.board[i]) + " ");
+                counter++;
             }
             Console.ResetColor();
             Console.WriteLine(" 8");
