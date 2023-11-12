@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using System.IO.Compression;
 
 namespace console_chess
 {
@@ -40,7 +41,7 @@ namespace console_chess
         private byte convStringToByteArray(string str)
         {
             //each byte stores both side and type of piece
-            //e.g. black horsey would be 0001 0011
+            //e.g. black horsey would be 0001 0011, white bishop would be 0000 0100
             byte tmp = 0;
             switch (str.Substring(0, 1))
             {
@@ -65,6 +66,22 @@ namespace console_chess
             }
 
             return tmp;
+        }
+        private object[] generateNewBoard(byte[] byteArray)
+        {
+            object[] board = Globals.initBoard();
+
+            //check if location is occupied
+            if (byteArray[1] < 128 && byteArray[1] >= 16)
+            {
+
+            }
+            else
+            {
+                //Globals.board[location] = this;
+            }
+
+            return null;
         }
         private object[] convByteToBoard(object[] board)
         {
