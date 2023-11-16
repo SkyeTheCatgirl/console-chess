@@ -19,8 +19,10 @@ Scan X moves ahead (x=2)
 2) make byte array that stores position of piece and place it moves to, i.e. the move
 3) for each piece on the board, run its move validation, return list, for each item on list/for each move each piece can take: 1) record position of piece 2) record position of where its gonna move it 3) add the byte array (move) to list.
 At this point we have a list of all the possible moves that can be taken for the original board.
+this is all the moves the bot can take
+now lets work out all the moves the player could take in response
 4) generate new board with that move.
     steps to generating new board
     4.1) create a new blank board using initboard()
     4.2) Manually do move because I can't repurpose the normal code
-    4.3) 
+5) 

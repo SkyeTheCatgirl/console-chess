@@ -1,12 +1,13 @@
 using System.Diagnostics.Contracts;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 
 namespace console_chess
 {
     class bot
     {
         //Value piece move
-        List<byte[]> list = new List<byte[]>();
+        List<byte[]> fulllist = new List<byte[]>();
         public void scanXMovesAhead(Int16 X)
         {
             //To break it down;
@@ -18,12 +19,21 @@ namespace console_chess
             
             for (int i = 0; i < X; i++)
             {
-                allMoveValidations(Globals.board);
+                fulllist = allMoveValidations(Globals.board);
+            }
+
+            fulllist.Add(null);
+
+            // Generating next boards
+            for (int i = 0; i < (fulllist.Count() - 1); i++)
+            {
+                allMoveValidations(generateNewBoard(fulllist[i]));
             }
         }
-        private void allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
+        private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
             byte[] aaarg = new byte[2]; 
+            List<byte[]> list = new List<byte[]>();
             for (int i = 0; i < 64; i++)
             {
                 //allmoves.Add(Globals.validateMoves(board[i]));
@@ -37,6 +47,7 @@ namespace console_chess
                     list.Add(aaarg);
                 }
             }
+            return list;
         }
         private byte convStringToByteArray(string str)
         {
@@ -71,15 +82,20 @@ namespace console_chess
         {
             object[] board = Globals.initBoard();
 
-            //check if location is occupied
-            if (byteArray[1] < 128 && byteArray[1] >= 16)
-            {
-
-            }
-            else
-            {
-                //Globals.board[location] = this;
-            }
+            //if location is occupied and the piece occupied is a different side
+            //if (byteArray[1] < 128 && (byteArray[1] & 16) != (byteArray[0] & 16))
+            //Explaination:
+            //byteArray[1] is the location of the piece
+            // < 128 means is the location empty or not
+            // & 16 is an AND operator to check what side the piece is on
+            //{
+                //take piece
+            //}
+            //else
+            //{
+                board[byteArray[1]] = board[byteArray[0]];
+                board[byteArray[0]] = null;
+            //}
 
             return null;
         }
