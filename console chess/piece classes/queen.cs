@@ -9,10 +9,10 @@ public class queen : Board
         identifier = "Q";
         side = input;
     }
-    public List<int> validatequeen(int square)
+    public List<int> validatequeen(int square, object[] board)
     {
         bishop bishop = new bishop(side);
         rook rook = new rook(side);
-        return rook.validaterook(square).Concat(bishop.validatebishop(square)).ToList();
+        return rook.validaterook(square, board).Concat(bishop.validatebishop(square, board)).ToList();
     }
 }

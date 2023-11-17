@@ -9,7 +9,7 @@ public class king : Board
         identifier = "K";
         side = input;
     }
-    public List<int> validateking(int square)
+    public List<int> validateking(int square, object[] board)
     {
         int[] tempArrayKing = new int[8];
         int[] tempArrayDistancesK = new int[8] { -9, -8, -7, -1, 1, 7, 8, 9 };
@@ -25,11 +25,11 @@ public class king : Board
             {
                 if (square + item >= 0 & square + item < 64)
                 {
-                    if (Globals.board[square + item] == null)
+                    if (board[square + item] == null)
                     {
                         tempArrayKing[Kingcounter] = square + item;
                     }
-                    else if (Globals.mDside(Globals.board[square + item]) != side)
+                    else if (Globals.mDside(board[square + item]) != side)
                     {
                         tempArrayKing[Kingcounter] = square + item;
                     }

@@ -27,7 +27,7 @@ namespace console_chess
         public static bot bot = new bot();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
-        public static object[] parameters = new object[1];
+        public static object[] parameters = new object[2];
 
          //Funcs
          //mD = method delegate
@@ -282,6 +282,7 @@ namespace console_chess
             piece = IntSquare;
 
             Globals.parameters[0] = IntSquare;
+            Globals.parameters[1] = Globals.board;
             lsPossibleMoves = Globals.validateMoves(Globals.board[IntSquare]);
             if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
             {

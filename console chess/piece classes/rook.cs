@@ -9,7 +9,7 @@ public class rook : Board
         identifier = "R";
         side = input;
     }
-    public List<int> validaterook(int square)
+    public List<int> validaterook(int square, object[] board)
     {
         int[] tempArrayRook = new int[16];
         int tempValRook1 = square % 8; // horizontal column number, 0,1,2,3, etc. Starts from 0 not 1. the abcs

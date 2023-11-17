@@ -9,7 +9,7 @@ public class knight : Board
         identifier = "K";
         side = input;
     } 
-    public List<int> validateknight(int square)
+    public List<int> validateknight(int square, object[] board)
     {
         int[] tempArrayKnight = new int[8];
         int[] tempArrayDistances = new int[8] { -17, -15, -10, -6, 6, 10, 15, 17 };
@@ -28,11 +28,11 @@ public class knight : Board
             {
                 if (square + item >= 0 & square + item < 64)
                 {
-                    if (Globals.board[square + item] == null) //if nothing is there
+                    if (board[square + item] == null) //if nothing is there
                     {
                         tempArrayKnight[Kcounter] = square + item;
                     }
-                    else if (Globals.mDside(Globals.board[square + item]) != side)
+                    else if (Globals.mDside(board[square + item]) != side)
                     {
                         tempArrayKnight[Kcounter] = square + item;
                     }

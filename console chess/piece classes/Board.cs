@@ -46,7 +46,7 @@ namespace console_chess
             return curatedList;
         }
 
-        public void movePiece(int location)
+        public void movePiece(int location, object[] a = null)
         {
             //location is where the piece is going to, this method runs from the object that is moving
 
