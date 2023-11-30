@@ -173,6 +173,10 @@ namespace console_chess
                 Console.ReadLine();
                 BotGame();
             }
+            else if (Globals.vcchoice == 3)
+            {
+                Globals.bot.scanXMovesAhead(2);
+            }
             Console.ReadLine();
         }
         public static void printBoard()
