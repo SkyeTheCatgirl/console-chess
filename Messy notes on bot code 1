@@ -25,4 +25,16 @@ now lets work out all the moves the player could take in response
     steps to generating new board
     4.1) create a new blank board using initboard()
     4.2) Manually do move because I can't repurpose the normal code
-5) 
+5) Run move validation for newly generated board
+6) append new each now move to its first move to make a full two moves
+7) add the full move to main list
+now we have every entire move ahead, one move for the bot and then one for the player
+however, they have no assigned values yet, so lets make a assign value function and basically copy our taking piece code
+8) assign values to moves
+    steps to assigning moves
+    8.1) take a byte array as an input, that is our original move
+    8.2) run logic to find out of a piece will be taken or not
+    8.3) if it isn't occupied, assign a value of null
+    8.4) if it is occupied, find out what the value piece its taking is
+    8.5) assign the move that pieces value
+

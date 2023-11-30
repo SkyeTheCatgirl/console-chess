@@ -17,33 +17,37 @@ namespace console_chess
             //List<List<List<int[2]>>> = all possible boards in a move
             //LLL<int>[X] = amount of boards ahead
             
-            for (int i = 0; i < X; i++)
+            foreach (var item in allMoveValidations(Globals.board))
             {
-                fulllist = allMoveValidations(Globals.board);
+                fulllist.Add(assignValue(item));
             }
 
             fulllist.Add(null);
 
             // Generating next boards
-            for (int i = 0; i < (fulllist.Count() - 1); i++)
+            foreach (var item in fulllist)
             {
-                allMoveValidations(generateNewBoard(fulllist[i]));
+                foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+                {
+                    fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                }
             }
         }
         private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
-            byte[] aaarg = new byte[2]; 
             List<byte[]> list = new List<byte[]>();
+            byte[] aaarg = new byte[2];
             for (int i = 0; i < 64; i++)
             {
                 //allmoves.Add(Globals.validateMoves(board[i]));
                 
-
+                Globals.parameters[0] = i;
+                Globals.parameters[1] = board;
                 foreach (var item in Globals.validateMoves(board[i]))
                 {
                     //allmoves.Add(item);
                     aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i]));
-                    aaarg[1] = convStringToByteArray(Globals.mDside(board[i]) + item.ToString() + Globals.mDside(board[i]));
+                    aaarg[1] = convStringToByteArray(Globals.mDid(board[i]) + item.ToString() + Globals.mDside(board[i]));
                     list.Add(aaarg);
                 }
             }
@@ -82,22 +86,29 @@ namespace console_chess
         {
             object[] board = Globals.initBoard();
 
-            //if location is occupied and the piece occupied is a different side
-            //if (byteArray[1] < 128 && (byteArray[1] & 16) != (byteArray[0] & 16))
-            //Explaination:
-            //byteArray[1] is the location of the piece
-            // < 128 means is the location empty or not
-            // & 16 is an AND operator to check what side the piece is on
-            //{
-                //take piece
-            //}
-            //else
-            //{
-                board[byteArray[1]] = board[byteArray[0]];
-                board[byteArray[0]] = null;
-            //}
+            board[byteArray[1]] = board[byteArray[0]];
+            board[byteArray[0]] = null;
 
             return null;
+        }
+        private byte[] assignValue(byte[] origMove)
+        {
+            object[] board = Globals.initBoard();
+            byte[] moveWAttValue = new byte[] {origMove[0], origMove[1], };
+            
+            //move with attached value
+
+            //if location is occupied and the piece occupied is a different side
+            if (origMove[1] < 128 && (origMove[1] & 16) != (origMove[0] & 16))
+            //Explaination:
+            //origMove[1] is the location of the piece
+            // < 128 means is the location empty or not
+            // & 16 is a bitwise AND operator to check what side the piece is on
+            {
+                moveWAttValue[3] = Convert.ToByte(Globals.mDvalue(origMove[1]));
+            }
+
+            return moveWAttValue;
         }
         private object[] convByteToBoard(object[] board)
         {
