@@ -6,7 +6,7 @@ public class knight : Board
     {
         value = 3;
         name = "Knight";
-        identifier = "K";
+        identifier = "N";
         side = input;
     } 
     public List<int> validateknight(int square, object[] board)
