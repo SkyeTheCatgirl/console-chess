@@ -8,6 +8,7 @@ namespace console_chess
     {
         //Value piece move
         List<byte[]> fulllist = new List<byte[]>();
+        int playerColour = Globals.playerColour;
         public void scanXMovesAhead(Int16 X)
         {
             //To break it down;
@@ -25,13 +26,23 @@ namespace console_chess
             fulllist.Add(null);
 
             // Generating next boards
-            foreach (var item in fulllist)
-            {
-                foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+            //foreach (var item in fulllist)
+            for (int i = 0; i < fulllist.Count(); i++)
+            {   
+                var item = fulllist[i];
+                if (item != null)
                 {
-                    fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                    foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+                    {
+                        fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                    }
+                }
+                else if (item == null)
+                {
+                    break;
                 }
             }
+            Console.WriteLine(fulllist.Count());
         }
         private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
@@ -46,10 +57,11 @@ namespace console_chess
                 Globals.parameters[0] = i;
                 Globals.parameters[1] = board;
                 List<int> validmoves = Globals.validateMoves(board[i]);
+                Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
                     int item = validmoves[j];
-                    if (Globals.mDside(board[i]) != Globals.playerColour)
+                    if (Globals.mDside(board[i]) != playerColour)
                     {
                         //allmoves.Add(item);
                         //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
