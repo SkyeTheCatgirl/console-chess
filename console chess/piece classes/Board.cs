@@ -38,11 +38,14 @@ namespace console_chess
                 {
                     int temp = (item / 8) + 1;
                     string temp1 = Globals.convNumToLetter(item);
-                    Console.Write(temp1 + temp.ToString() + " ");
+                    if (Globals.vcchoice != 3)
+                    {
+                        Console.Write(temp1 + temp.ToString() + " ");
+                    }
                     curatedList.Add(item);
                 }
             }
-            Console.WriteLine();
+            if (Globals.vcchoice != 3) { Console.WriteLine(); }
             return curatedList;
         }
 

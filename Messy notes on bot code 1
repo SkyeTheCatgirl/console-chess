@@ -38,3 +38,8 @@ however, they have no assigned values yet, so lets make a assign value function 
     8.4) if it is occupied, find out what the value piece its taking is
     8.5) assign the move that pieces value
 
+
+
+NOTE
+Currently storing moves very inefficiently
+possibly change previous moves to an index number instead

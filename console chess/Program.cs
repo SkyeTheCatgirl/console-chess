@@ -175,7 +175,7 @@ namespace console_chess
             }
             else if (Globals.vcchoice == 3)
             {
-                Globals.bot.scanXMovesAhead(2);
+                Globals.bot.scanXMovesAhead(3);
             }
             Console.ReadLine();
         }
@@ -325,6 +325,8 @@ namespace console_chess
         static void botMove()
         {
             Console.WriteLine("turn");
+            Globals.bot.scanXMovesAhead(1);
+            Thread.Sleep(5000);
             endTurn();
             return;
         }

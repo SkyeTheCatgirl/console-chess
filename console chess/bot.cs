@@ -8,8 +8,8 @@ namespace console_chess
     {
         //Value piece move
         List<byte[]> fulllist = new List<byte[]>();
-        int playerColour = Globals.playerColour;
-        public void scanXMovesAhead(Int16 X)
+        int playerColour = 1;
+        public void scanXMovesAhead(Int16 X) //X is one full move (comprised of two half moves, one for each player)
         {
             //To break it down;
             //int[2] = array to store both value and location of each move
@@ -18,29 +18,39 @@ namespace console_chess
             //List<List<List<int[2]>>> = all possible boards in a move
             //LLL<int>[X] = amount of boards ahead
             
+            playerColour = 1;
             foreach (var item in allMoveValidations(Globals.board))
             {
                 fulllist.Add(assignValue(item));
             }
 
             fulllist.Add(null);
-
+            
             // Generating next boards
             //foreach (var item in fulllist)
-            for (int i = 0; i < fulllist.Count(); i++)
-            {   
-                var item = fulllist[i];
-                if (item != null)
-                {
-                    foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+            for (int h = 0; h < (X*2) - 1; h++)
+            {
+                playerColour = playerColour == 1 ? 2 : 1; //Player colour flipper, just changes 1 to 2 and 2 to 1
+                int lim = fulllist.Count();
+                for (int i = 0; i < lim; i++)
+                {   
+                    var item = fulllist[i];
+                    if (item != null)
                     {
-                        fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                        foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+                        {
+                            fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                        }
                     }
+                    // else if (item == null)
+                    // {
+                    //     break;
+                    // }
+                    Console.Clear();
+                    Console.WriteLine((((double)i/lim)*100) + "%");
                 }
-                else if (item == null)
-                {
-                    break;
-                }
+                Console.Clear();
+                Console.WriteLine(h + "/" + ((X*2) - 1));
             }
             Console.WriteLine(fulllist.Count());
         }
@@ -57,7 +67,7 @@ namespace console_chess
                 Globals.parameters[0] = i;
                 Globals.parameters[1] = board;
                 List<int> validmoves = Globals.validateMoves(board[i]);
-                Console.Clear();
+                //Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
                     int item = validmoves[j];
