@@ -19,27 +19,51 @@ namespace console_chess
             //LLL<int>[X] = amount of boards ahead
             
             playerColour = 1;
+            fulllist.Add(null);
             foreach (var item in allMoveValidations(Globals.board))
             {
-                fulllist.Add(assignValue(item));
+                if (item != null)
+                {
+                    fulllist.Add(assignValue(item));
+                }
             }
 
             fulllist.Add(null);
             
             // Generating next boards
             //foreach (var item in fulllist)
+            int prevLim = 0;
             for (int h = 0; h < (X*2) - 1; h++)
             {
                 playerColour = playerColour == 1 ? 2 : 1; //Player colour flipper, just changes 1 to 2 and 2 to 1
                 int lim = fulllist.Count();
-                for (int i = 0; i < lim; i++)
+                for (int i = prevLim; i < lim; i++)
                 {   
-                    var item = fulllist[i];
+                    byte[][] prevMoves = new byte[h + 1][];
+                    byte[] item = fulllist[i]; //for h = 0, item length 3; h++, length++
+                    byte[] index = new byte[(i / 255) + 1];
+                    for (int j = 0; j < index.Length; j++)
+                    {
+                        index[j] = 255;
+                    }
+                    try{index[index.Length - 1] = Convert.ToByte(i % 256);}catch{}
                     if (item != null)
                     {
-                        foreach (var item2 in allMoveValidations(generateNewBoard(item)))
+                        byte[] subMove = item;
+                        for (int k = 0; k < h; k++)
                         {
-                            fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                            int sumofprevmoves = 0;
+                            for (int l = 3; l < subMove.Length - 2; l++)
+                            {
+                                sumofprevmoves += subMove[l];
+                            }
+                            prevMoves[k] = fulllist[sumofprevmoves];
+                            subMove = fulllist[sumofprevmoves];
+                        }
+                        foreach (var item2 in allMoveValidations(generateNewBoard(item, prevMoves)))
+                        {
+                            //fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                            fulllist.Add(assignValue(item2).Concat(index).ToArray());
                         }
                     }
                     // else if (item == null)
@@ -48,9 +72,8 @@ namespace console_chess
                     // }
                     Console.Clear();
                     Console.WriteLine((((double)i/lim)*100) + "%");
+                    prevLim = lim;
                 }
-                Console.Clear();
-                Console.WriteLine(h + "/" + ((X*2) - 1));
             }
             Console.WriteLine(fulllist.Count());
         }
@@ -125,9 +148,19 @@ namespace console_chess
 
             return tmp;
         }
-        private object[] generateNewBoard(byte[] byteArray)
+        private object[] generateNewBoard(byte[] byteArray, byte[][] prevMoves)
         {
             object[] board = Globals.board;
+
+            prevMoves = prevMoves.Reverse().ToArray();
+            foreach (byte[] item in prevMoves)
+            {
+                if (item != null)
+                {
+                    board[item[1]] = board[item[0]];
+                    board[item[0]] = null;
+                }
+            }
 
             board[byteArray[1]] = board[byteArray[0]];
             board[byteArray[0]] = null;
@@ -137,17 +170,17 @@ namespace console_chess
         private byte[] assignValue(byte[] origMove)
         {
             object[] board = Globals.board;
-            byte[] moveWAttValue = new byte[] {origMove[0], origMove[1], origMove[2], };
+            byte[] value = new byte[1];
             
             //move with attached value
 
             //if location is occupied and the piece occupied is a different side
             if (origMove[2] < 8 && (origMove[2] == 16 | origMove[2] == 1))
             {
-                moveWAttValue[3] = Convert.ToByte(Globals.mDvalue(origMove[1]));
+                value[0] = Convert.ToByte(Globals.mDvalue(origMove[1]));
             }
 
-            return moveWAttValue;
+            return origMove.Concat(value).ToArray();
         }
         private object[] convByteToBoard(object[] board)
         {

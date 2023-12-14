@@ -43,3 +43,15 @@ however, they have no assigned values yet, so lets make a assign value function 
 NOTE
 Currently storing moves very inefficiently
 possibly change previous moves to an index number instead
+
+
+first iteration of scanning only stores one move
+next iteration will store 2 moves 
+when h = 0, 2 moves stored
+each h++, +1 move chain
+
+
+move[3] is the previous moves if length > 4
+final position is the value
+
+notes: value position is inconsistent and fucked up
