@@ -41,24 +41,35 @@ namespace console_chess
                 {   
                     byte[][] prevMoves = new byte[h + 1][];
                     byte[] item = fulllist[i]; //for h = 0, item length 3; h++, length++
-                    byte[] index = new byte[(i / 255) + 1];
-                    for (int j = 0; j < index.Length; j++)
+                    byte[] index;
+                    if (i > 65535) //16 bits
                     {
-                        index[j] = 255;
+                        index = new byte[3] {255, 255, Convert.ToByte(i > 16)};
                     }
-                    try{index[index.Length - 1] = Convert.ToByte(i % 256);}catch{}
+                    else if (i > 255) // 8 bits
+                    {
+                        index = new byte[2] {255, Convert.ToByte(i >> 8)};
+                    }
+                    else
+                    {
+                        index = new byte[1] {Convert.ToByte(i)};
+                    }
+                    
                     if (item != null)
                     {
                         byte[] subMove = item;
                         for (int k = 0; k < h; k++)
                         {
                             int sumofprevmoves = 0;
-                            for (int l = 3; l < subMove.Length - 2; l++)
+                            for (int l = 4; l < subMove.Length - 2; l++)
                             {
                                 sumofprevmoves += subMove[l];
                             }
                             prevMoves[k] = fulllist[sumofprevmoves];
-                            subMove = fulllist[sumofprevmoves];
+                            if (fulllist[sumofprevmoves] != null)
+                            {
+                                subMove = fulllist[sumofprevmoves];
+                            }
                         }
                         foreach (var item2 in allMoveValidations(generateNewBoard(item, prevMoves)))
                         {
@@ -76,6 +87,7 @@ namespace console_chess
                 }
             }
             Console.WriteLine(fulllist.Count());
+            
         }
         private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
