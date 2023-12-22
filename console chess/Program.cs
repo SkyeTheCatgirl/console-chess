@@ -175,7 +175,8 @@ namespace console_chess
             }
             else if (Globals.vcchoice == 3)
             {
-                Globals.bot.scanXMovesAhead(3);
+                Globals.bot.minimaxinitialisaiton(Globals.board, 8, -1000, 1000, true);
+                //Globals.bot.scanXMovesAhead(3);
             }
             Console.ReadLine();
         }

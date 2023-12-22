@@ -92,9 +92,10 @@ namespace console_chess
         private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
             List<byte[]> list = new List<byte[]>();
-            byte[] aaarg = new byte[3];
+            //byte[] aaarg = new byte[3];
             for (int i = 0; i < 64; i++)
             {
+                
                 //aaarg[0] is the position of the piece
                 //aaarg[1] is the position of the place the piece wants to go to
                 //aaarg[2] is the data of the piece
@@ -105,9 +106,11 @@ namespace console_chess
                 //Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
+                    byte[] aaarg = new byte[3];
                     int item = validmoves[j];
-                    if (Globals.mDside(board[i]) != playerColour)
+                    if (Globals.mDside(board[i]) == playerColour)
                     {
+                        
                         //allmoves.Add(item);
                         //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
                         //convert string to byte array( id of the piece + number + side of the piece )
@@ -162,21 +165,28 @@ namespace console_chess
         }
         private object[] generateNewBoard(byte[] byteArray, byte[][] prevMoves)
         {
-            object[] board = Globals.board;
-
-            prevMoves = prevMoves.Reverse().ToArray();
-            foreach (byte[] item in prevMoves)
+            //object[] board = Globals.board;
+            object[] board = new object[Globals.board.Length];
+            for (int i = 0; i < Globals.board.Length; i++)
             {
-                if (item != null)
+                board[i] = Globals.board[i];
+            }
+
+            if (prevMoves != null)
+            {
+                //prevMoves = prevMoves.Reverse().ToArray();
+                foreach (byte[] item in prevMoves)
                 {
-                    board[item[1]] = board[item[0]];
-                    board[item[0]] = null;
+                    if (item != null)
+                    {
+                        board[item[1]] = board[item[0]];
+                        board[item[0]] = null;
+                    }
                 }
             }
 
             board[byteArray[1]] = board[byteArray[0]];
             board[byteArray[0]] = null;
-
             return board;
         }
         private byte[] assignValue(byte[] origMove)
@@ -199,6 +209,85 @@ namespace console_chess
             return null;
             //29292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929
             //bqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbq
+        }
+        public void minimaxinitialisaiton(object[] position, int depth, int alpha, int beta, bool maxPlayer)
+        {
+            byte[][] test = new byte[0][];
+            Console.WriteLine("\n\n\n" + minimax(position, depth, alpha, beta, maxPlayer, null, test));
+        }
+        private int minimax(object[] position, int depth, int alpha, int beta, bool maxPlayer, byte[] moveData, byte[][] prevMove)
+        {
+            if (moveData != null) {fulllist.Add(moveData);}
+            byte[][] prevMoves = new byte[8 - depth][];
+            for (int i = 0; i < prevMove.Length; i++)
+            {
+                prevMoves[i] = prevMove[i];
+            }
+            if (depth < 3) {prevMoves[3 - depth - 1] = moveData;}
+
+            if (depth == 0 /* | game is over in position */)
+            {
+                //return value of position
+                return altAssignValue(position);
+            }
+            if (maxPlayer) //the bot
+            {
+                playerColour = 2;
+                int maxEval = -1000; //a number it'll never reach
+                //for each next move (i.e. using allMoveValidations)
+                foreach (var child in allMoveValidations(position))
+                {
+                    moveData = child;
+                    //Console.Write(moveData[0]);Console.Write(moveData[1]);
+                    //int eval = minimax(position with next move (generate new board), depth - 1, alpha, beta, false)
+                    int eval = minimax(generateNewBoard(child, prevMoves), depth - 1, alpha, beta, false, moveData, prevMoves);
+                    //maxEval = max between maxEval and eval
+                    maxEval = maxEval > eval ? maxEval : eval;
+                    //alpha = max between alpha and eval
+                    alpha = alpha > eval ? alpha : eval;
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+                return maxEval;
+            }
+            else //the player
+            {
+                playerColour = 1;
+                int minEval = 1000; //a number it'll never reach
+                foreach (var child in allMoveValidations(position))
+                {
+                    moveData = child;
+                    //int eval = minimax(position with next move (generate new board), depth - 1, alpha, beta, true)
+                    int eval = minimax(generateNewBoard(child, prevMoves), depth -1, alpha, beta, true, moveData, prevMoves);
+                    //minEval = min between minEval and eval
+                    minEval = minEval < eval ? minEval : eval;
+                    //beta = min between beta and eval
+                    beta = beta < eval ? beta : eval;
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+                return minEval;
+            }
+        }
+        private int altAssignValue(object[] board)
+        {
+            int totalSum = 0;
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (Globals.mDside(board[i]) == 1)
+                {
+                    totalSum -= Globals.mDvalue(board[i]);
+                }
+                else if (Globals.mDside(board[i]) == 2)
+                {
+                    totalSum += Globals.mDvalue(board[i]);
+                }
+            }
+            return totalSum;
         }
     }
 }
