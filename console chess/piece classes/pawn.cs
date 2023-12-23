@@ -48,50 +48,56 @@ public class pawn : Board
         // }
 
         //moving and taking pieces
-
-        if (side == 1) //white
+        try
         {
-            //moving forward
-            if (board[square + 8] == null)
+            if (side == 1) //white
             {
-            tempArrayPawn[0] = square + 8;
-                if (hasMoved == false && board[square + 16] == null)
+                //moving forward
+                if (board[square + 8] == null)
                 {
-                    tempArrayPawn[1] = square + 16;
-                    passantAble = true;
+                tempArrayPawn[0] = square + 8;
+                    if (hasMoved == false && board[square + 16] == null)
+                    {
+                        tempArrayPawn[1] = square + 16;
+                        passantAble = true;
+                    }
+                }
+
+                if (Globals.mDside(board[square + 7]) == 2)
+                {
+                    tempArrayPawn[2] = square + 7;
+                }
+                if (Globals.mDside(board[square + 9]) == 2)
+                {
+                    tempArrayPawn[3] = square + 9;
                 }
             }
+            else if (side == 2) //black
+            {
+                //moving forward
+                if (board[square - 8] == null)
+                {
+                    tempArrayPawn[0] = square - 8;
+                    if (hasMoved == false && board[square - 16] == null)
+                    {
+                        tempArrayPawn[1] = square - 16;
+                        passantAble = true;
+                    }
+                }
 
-            if (Globals.mDside(board[square + 7]) == 2)
-            {
-                tempArrayPawn[2] = square + 7;
-            }
-            if (Globals.mDside(board[square + 9]) == 2)
-            {
-                tempArrayPawn[3] = square + 9;
+                if (Globals.mDside(board[square - 7]) == 1)
+                {
+                    tempArrayPawn[2] = square - 7;
+                }
+                if (Globals.mDside(board[square - 9]) == 1)
+                {
+                    tempArrayPawn[3] = square - 9;
+                }
             }
         }
-        else if (side == 2) //black
+        catch
         {
-            //moving forward
-            if (board[square - 8] == null)
-            {
-                tempArrayPawn[0] = square - 8;
-                if (hasMoved == false && board[square - 16] == null)
-                {
-                    tempArrayPawn[1] = square - 16;
-                    passantAble = true;
-                }
-            }
-
-            if (Globals.mDside(board[square - 7]) == 1)
-            {
-                tempArrayPawn[2] = square - 7;
-            }
-            if (Globals.mDside(board[square - 9]) == 1)
-            {
-                tempArrayPawn[3] = square - 9;
-            }
+            
         }
 
         return printPossibleMoves(tempArrayPawn);

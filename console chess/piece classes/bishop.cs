@@ -12,6 +12,19 @@ public class bishop : Board
     }
     public List<int> validatebishop(int square, object[] board)
     {
+        // List<int> list1 = new List<int>();List<int> list2 = new List<int>();List<int> list3 = new List<int>();
+        // List<int> list4 = new List<int>();
+        // Thread _thread_1 = new Thread(() => {list1.AddRange(validateDiags(square, -9, 0, board));});
+        // Thread _thread_2 = new Thread(() => {list2.AddRange(validateDiags(square, -7, 1, board));});
+        // Thread _thread_3 = new Thread(() => {list3.AddRange(validateDiags(square, 7, 2, board));});
+        // Thread _thread_4 = new Thread(() => {list4.AddRange(validateDiags(square, 9, 3, board));});
+
+        // _thread_1.Start();_thread_2.Start();_thread_3.Start();_thread_4.Start();
+        // _thread_1.Join();_thread_2.Join();_thread_3.Join();_thread_4.Join();
+        // list3.AddRange(list4);
+        // list2.AddRange(list3);
+        // list1.AddRange(list2);
+        // return list1;
         return validateDiags(square, -9, 0, board).Concat(validateDiags(square, -7, 1, board))
         .Concat(validateDiags(square, 7, 2, board)).Concat(validateDiags(square, 9, 3, board)).ToList();
     }

@@ -2,6 +2,7 @@ using System.Diagnostics.Contracts;
 using System.Formats.Tar;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace console_chess
 {
@@ -94,7 +95,6 @@ namespace console_chess
         private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
         {
             List<byte[]> list = new List<byte[]>();
-            //byte[] aaarg = new byte[3];
             for (int i = 0; i < 64; i++)
             {
                 
@@ -126,6 +126,41 @@ namespace console_chess
             }
             return list;
         }
+        protected List<byte[]> MoveValidations_thread(object[] board, int start, int limit)
+        {
+            List<byte[]> list = new List<byte[]>();
+            for (int i = start; i < limit; i++)
+            {
+                
+                //aaarg[0] is the position of the piece
+                //aaarg[1] is the position of the place the piece wants to go to
+                //aaarg[2] is the data of the piece
+                
+                Globals.parameters[0] = i;
+                Globals.parameters[1] = board;
+                List<int> validmoves = Globals.validateMoves(board[i]);
+                //Console.Clear();
+                for (int j = 0; j < validmoves.Count();j++)
+                {
+                    byte[] aaarg = new byte[3];
+                    int item = validmoves[j];
+                    if (Globals.mDside(board[i]) == playerColour)
+                    {
+                        
+                        //allmoves.Add(item);
+                        //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
+                        //convert string to byte array( id of the piece + number + side of the piece )
+                        aaarg[0] = Convert.ToByte(i);
+                        //aaarg[1] = convStringToByteArray(Globals.mDid(board[i]) + item.ToString() + Globals.mDside(board[i])); //destination of piece
+                        aaarg[1] = Convert.ToByte(item);
+                        aaarg[2] = convStringToByteArray(Globals.mDside(board[i]).ToString() + Globals.mDside(board[item]).ToString());
+                        list.Add(aaarg);
+                    }
+                }
+            }
+            return list;
+        }
+
         private byte convStringToByteArray(string str)
         {
             //REPUROSED now it splits the byte into two nibbles, the lhs stores data about the original piece, the rhs stores data about the destination
