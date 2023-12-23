@@ -19,9 +19,9 @@ public class rook : Board
         for (int i = 0; i < 8; i++)
         {
             tempArrayRook[i] = tempValRook1 + (i * 8); //adds the position of each row in a column, eg column d would be 3,11,19,27,35,43,51,59
-            if (Globals.board[tempArrayRook[i]] != null) //if the position we're looking at on the Globals.board isn't empty
+            if (board[tempArrayRook[i]] != null) //if the position we're looking at on the Globals.board isn't empty
             {
-                if (side == Globals.mDside(Globals.board[tempArrayRook[i]])) //if our piece and the piece we're looking at are the same colour
+                if (side == Globals.mDside(board[tempArrayRook[i]])) //if our piece and the piece we're looking at are the same colour
                 {
                     if (tempValRook1 + (i * 8) == square) //if the position we're looking at is the rook
                     {
@@ -113,5 +113,10 @@ public class rook : Board
         }
 
         return printPossibleMoves(tempArrayRook);
+    }
+
+    protected List<int> validateVerticle(int square, object[] board)
+    {
+        return null;
     }
 }
