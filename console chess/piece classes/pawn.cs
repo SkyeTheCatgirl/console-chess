@@ -55,7 +55,7 @@ public class pawn : Board
             if (board[square + 8] == null)
             {
             tempArrayPawn[0] = square + 8;
-                if (board[square + 16] == null & hasMoved == false)
+                if (hasMoved == false && board[square + 16] == null)
                 {
                     tempArrayPawn[1] = square + 16;
                     passantAble = true;
@@ -77,7 +77,7 @@ public class pawn : Board
             if (board[square - 8] == null)
             {
                 tempArrayPawn[0] = square - 8;
-                if (board[square - 16] == null & hasMoved == false)
+                if (hasMoved == false && board[square - 16] == null)
                 {
                     tempArrayPawn[1] = square - 16;
                     passantAble = true;
