@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace console_chess
@@ -38,14 +39,14 @@ namespace console_chess
                 {
                     int temp = (item / 8) + 1;
                     string temp1 = Globals.convNumToLetter(item);
-                    if (Globals.vcchoice != 3)
+                    if (!bot.botPlaying && Globals.vcchoice != 3)
                     {
                         Console.Write(temp1 + temp.ToString() + " ");
                     }
                     curatedList.Add(item);
                 }
             }
-            if (Globals.vcchoice != 3) { Console.WriteLine(); }
+            if (!bot.botPlaying && Globals.vcchoice != 3) { Console.WriteLine(); }
             return curatedList;
         }
 
