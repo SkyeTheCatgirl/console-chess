@@ -34,11 +34,11 @@ public class pawn : Board
                     }
                 }
         
-                if (square % 8 == 0 && Globals.mDside(board[square + 7]) == 2)
+                if (square % 8 != 0 && Globals.mDside(board[square + 7]) == 2)
                 {
                     tempArrayPawn[2] = square + 7;
                 }
-                if (square % 8 == 7 && Globals.mDside(board[square + 9]) == 2)
+                if (square % 8 != 7 && Globals.mDside(board[square + 9]) == 2)
                 {
                     tempArrayPawn[3] = square + 9;
                 }
@@ -56,11 +56,11 @@ public class pawn : Board
                     }
                 }
 
-                if (square % 8 == 0 && Globals.mDside(board[square - 7]) == 1)
+                if (square % 8 != 0 && Globals.mDside(board[square - 7]) == 1)
                 {
                     tempArrayPawn[2] = square - 7;
                 }
-                if (square % 8 == 7 && Globals.mDside(board[square - 9]) == 1)
+                if (square % 8 != 7 && Globals.mDside(board[square - 9]) == 1)
                 {
                     tempArrayPawn[3] = square - 9;
                 }
