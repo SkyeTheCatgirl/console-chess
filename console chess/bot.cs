@@ -23,13 +23,13 @@ namespace console_chess
             
             playerColour = 1;
             fulllist.Add(null);
-            foreach (var item in allMoveValidations(Globals.board))
-            {
-                if (item != null)
-                {
-                    fulllist.Add(assignValue(item));
-                }
-            }
+            // foreach (var item in allMoveValidations(Globals.board))
+            // {
+            //     if (item != null)
+            //     {
+            //         fulllist.Add(assignValue(item));
+            //     }
+            // }
 
             fulllist.Add(null);
             
@@ -74,11 +74,11 @@ namespace console_chess
                                 subMove = fulllist[sumofprevmoves];
                             }
                         }
-                        foreach (var item2 in allMoveValidations(generateNewBoard(item, prevMoves)))
-                        {
-                            //fulllist.Add(item.Concat(assignValue(item2)).ToArray());
-                            fulllist.Add(assignValue(item2).Concat(index).ToArray());
-                        }
+                        // foreach (var item2 in allMoveValidations(generateNewBoard(item, prevMoves)))
+                        // {
+                        //     //fulllist.Add(item.Concat(assignValue(item2)).ToArray());
+                        //     fulllist.Add(assignValue(item2).Concat(index).ToArray());
+                        // }
                     }
                     // else if (item == null)
                     // {
@@ -92,19 +92,19 @@ namespace console_chess
             Console.WriteLine(fulllist.Count());
             
         }
-        private List<byte[]> allMoveValidations(object[] board) //runs move validation for every position on the board and adds it to a list
+        private List<byte[]> allMoveValidations(object[] board, int start, int end) //runs move validation for every position on the board and adds it to a list
         {
             List<byte[]> list = new List<byte[]>();
-            for (int i = 0; i < 64; i++)
+            for (int i = start; i < end; i++)
             {
                 
                 //aaarg[0] is the position of the piece
                 //aaarg[1] is the position of the place the piece wants to go to
                 //aaarg[2] is the data of the piece
-                
-                Globals.parameters[0] = i;
-                Globals.parameters[1] = board;
-                List<int> validmoves = Globals.validateMoves(board[i]);
+                object[] parameters = new object[2];
+                parameters[0] = i;
+                parameters[1] = board;
+                List<int> validmoves = Globals.validateMoves(board[i], parameters);
                 //Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
@@ -126,41 +126,20 @@ namespace console_chess
             }
             return list;
         }
-        protected List<byte[]> MoveValidations_thread(object[] board, int start, int limit)
+        protected List<byte[]> threaded_validations(object[] board)
         {
-            List<byte[]> list = new List<byte[]>();
-            for (int i = start; i < limit; i++)
-            {
-                
-                //aaarg[0] is the position of the piece
-                //aaarg[1] is the position of the place the piece wants to go to
-                //aaarg[2] is the data of the piece
-                
-                Globals.parameters[0] = i;
-                Globals.parameters[1] = board;
-                List<int> validmoves = Globals.validateMoves(board[i]);
-                //Console.Clear();
-                for (int j = 0; j < validmoves.Count();j++)
-                {
-                    byte[] aaarg = new byte[3];
-                    int item = validmoves[j];
-                    if (Globals.mDside(board[i]) == playerColour)
-                    {
-                        
-                        //allmoves.Add(item);
-                        //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
-                        //convert string to byte array( id of the piece + number + side of the piece )
-                        aaarg[0] = Convert.ToByte(i);
-                        //aaarg[1] = convStringToByteArray(Globals.mDid(board[i]) + item.ToString() + Globals.mDside(board[i])); //destination of piece
-                        aaarg[1] = Convert.ToByte(item);
-                        aaarg[2] = convStringToByteArray(Globals.mDside(board[i]).ToString() + Globals.mDside(board[item]).ToString());
-                        list.Add(aaarg);
-                    }
-                }
-            }
-            return list;
-        }
+            List<byte[]> list1 = new List<byte[]>();
+            List<byte[]> list2 = new List<byte[]>();
 
+            Thread _thread_1 = new Thread(() => {list1 = allMoveValidations(board, 0, 32);});
+            Thread _thread_2 = new Thread(() => {list2 = allMoveValidations(board, 32, 64);});
+
+            _thread_1.Start();_thread_2.Start();
+            _thread_1.Join();_thread_2.Join();
+
+            list1.AddRange(list2);
+            return list1;
+        }
         private byte convStringToByteArray(string str)
         {
             //REPUROSED now it splits the byte into two nibbles, the lhs stores data about the original piece, the rhs stores data about the destination
@@ -281,7 +260,7 @@ namespace console_chess
                 //dont want bit to be signed so 115 is the new 0
                 byte[] maxEval = new byte[4] {0, 0, 0, 0}; //0 is the lowest number a bit can store and the min value of the board is 1
                 //for each next move (i.e. using allMoveValidations)
-                foreach (var child in allMoveValidations(position))
+                foreach (var child in allMoveValidations(position, 0, 64)/*threaded_validations(position)*/)
                 {
                     moveData = child;
                     //Console.Write(moveData[0]);Console.Write(moveData[1]);
@@ -312,7 +291,7 @@ namespace console_chess
                 //int minEval = 1000; //a number it'll never reach
                 byte[] minEval = new byte[4] {0, 0, 0, 255}; //255 is the largest number a bit can store and the value of the board caps at 228
 
-                foreach (var child in allMoveValidations(position))
+                foreach (var child in allMoveValidations(position, 0, 64)/*threaded_validations(position)*/)
                 {
                     moveData = child;
                     //int eval = minimax(position with next move (generate new board), depth - 1, alpha, beta, true)

@@ -35,7 +35,7 @@ namespace console_chess
             List<int> curatedList = new List<int>();
             foreach (var item in array)
             {
-                if (item >= 0 & item < 64)
+                if (item >= 0 && item < 64 && item != null)
                 {
                     int temp = (item / 8) + 1;
                     string temp1 = Globals.convNumToLetter(item);
@@ -50,7 +50,7 @@ namespace console_chess
             return curatedList;
         }
 
-        public void movePiece(int location, object[] a = null)
+        public void movePiece(int location)
         {
             //location is where the piece is going to, this method runs from the object that is moving
 

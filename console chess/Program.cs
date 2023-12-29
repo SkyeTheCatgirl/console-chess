@@ -27,7 +27,6 @@ namespace console_chess
         public static bot bot = new bot();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
-        public static object[] parameters = new object[2];
 
          //Funcs
          //mD = method delegate
@@ -79,12 +78,12 @@ namespace console_chess
                 return 0;
             }
         };
-        public static Func<object, List<int>> validateMoves = obj =>
+        public static Func<object, object[], List<int>> validateMoves = (obj, param) =>
             {
                 if (obj != null)
                 {
                     MethodInfo method = obj.GetType().GetMethod("validate" + obj.GetType());
-                    return (List<int>)method.Invoke(obj, parameters);
+                    return (List<int>)method.Invoke(obj, param);
                 }
                 else
                 {
@@ -92,12 +91,12 @@ namespace console_chess
                     return emptyList;
                 }
             };
-        public static Func<object,  object> movePiece = obj =>
+        public static Func<object, object[],  object> movePiece = (obj, param) =>
             {
                 if (obj != null)
                 {
                     MethodInfo method = obj.GetType().GetMethod("movePiece");
-                    return method.Invoke(obj, parameters);
+                    return method.Invoke(obj, param);
                 }
                 else
                 {
@@ -240,6 +239,7 @@ namespace console_chess
         {
             Console.WriteLine("Starting bot game");
             Globals.funnyStall();
+            Console.Clear();
             printBoard();
             Console.WriteLine();
             Console.WriteLine("Player turn");
@@ -285,10 +285,10 @@ namespace console_chess
             Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
 
             piece = IntSquare;
-
-            Globals.parameters[0] = IntSquare;
-            Globals.parameters[1] = Globals.board;
-            lsPossibleMoves = Globals.validateMoves(Globals.board[IntSquare]);
+            object[] parameters = new object[2];
+            parameters[0] = IntSquare;
+            parameters[1] = Globals.board;
+            lsPossibleMoves = Globals.validateMoves(Globals.board[IntSquare], parameters);
             if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
             {
                 Console.WriteLine("This piece can't move anywhere!");
@@ -304,8 +304,9 @@ namespace console_chess
                 if (IntSquare == item)
                 {
                     if (Globals.mDname(Globals.board[piece]) == "Pawn") {((pawn)Globals.board[piece]).hasMoved = true;}
-                    Globals.parameters[0] = IntSquare;
-                    Globals.movePiece(Globals.board[piece]);
+                    parameters = new object[1];
+                    parameters[0] = IntSquare;
+                    Globals.movePiece(Globals.board[piece], parameters);
                     Globals.board[piece] = null;
                     endTurn();
                     return;
@@ -325,7 +326,7 @@ namespace console_chess
         }
         static void botMove()
         {
-            Console.WriteLine("turn");
+            Console.WriteLine("Bots turn");
             Globals.bot.minimaxinitialisaiton();
             //Thread.Sleep(5000);
             endTurn();

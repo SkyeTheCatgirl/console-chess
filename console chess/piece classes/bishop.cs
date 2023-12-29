@@ -25,6 +25,7 @@ public class bishop : Board
         // list2.AddRange(list3);
         // list1.AddRange(list2);
         // return list1;
+
         return validateDiags(square, -9, 0, board).Concat(validateDiags(square, -7, 1, board))
         .Concat(validateDiags(square, 7, 2, board)).Concat(validateDiags(square, 9, 3, board)).ToList();
     }
