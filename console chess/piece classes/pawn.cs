@@ -17,35 +17,6 @@ public class pawn : Board
     public List<int> validatepawn(int square, object[] board)
     {
         int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
-        
-        //en passant
-        // if (Globals.board[square + 1].passantAble == true)
-        // {
-        //     Console.WriteLine("En passant is forced");
-        //     passanting = true;
-        //     if (side == 1)
-        //     {
-        //         takePiece(square + 9);
-        //         //tempArrayPawn[2] = square + 9;
-        //     }
-        //     else if (side == 2)
-        //     {
-        //         takePiece(square - 9);
-        //         //tempArrayPawn[2] = square - 9;
-        //     }
-        // }
-        // if (Globals.board[square - 1].passantAble == true)
-        // {
-        //     Console.WriteLine("");
-        //     if (side == 1)
-        //     {
-        //         tempArrayPawn[3] = square + 7;
-        //     }
-        //     else if (side == 2)
-        //     {
-        //         tempArrayPawn[3] = square - 7;
-        //     }
-        // }
 
         //moving and taking pieces
         try
@@ -62,12 +33,12 @@ public class pawn : Board
                         passantAble = true;
                     }
                 }
-
-                if (Globals.mDside(board[square + 7]) == 2)
+        
+                if (square % 8 == 0 && Globals.mDside(board[square + 7]) == 2)
                 {
                     tempArrayPawn[2] = square + 7;
                 }
-                if (Globals.mDside(board[square + 9]) == 2)
+                if (square % 8 == 7 && Globals.mDside(board[square + 9]) == 2)
                 {
                     tempArrayPawn[3] = square + 9;
                 }
@@ -85,11 +56,11 @@ public class pawn : Board
                     }
                 }
 
-                if (Globals.mDside(board[square - 7]) == 1)
+                if (square % 8 == 0 && Globals.mDside(board[square - 7]) == 1)
                 {
                     tempArrayPawn[2] = square - 7;
                 }
-                if (Globals.mDside(board[square - 9]) == 1)
+                if (square % 8 == 7 && Globals.mDside(board[square - 9]) == 1)
                 {
                     tempArrayPawn[3] = square - 9;
                 }

@@ -36,13 +36,14 @@ public class bishop : Board
 
         while (loopingCondition)
         {
-            if (square + (diagDir * distFromBishop) >= 0 & (square + (diagDir * distFromBishop) < 64) & square % 8 != 0) //if not too high and not at the left edge
+            if (square + (diagDir * distFromBishop) >= 0 & (square + (diagDir * distFromBishop) < 64) && !((diagDir == (-9 | 7) && square % 8 == 0) | (diagDir == (9 | -7) && square % 8 == 7))) //if not too high and not at the left edge
             {
                 if (board[square + (diagDir * distFromBishop)] != null | blockadeB) //if there's something there
                 {
-                    if (Globals.mDside(board[square + (diagDir * distFromBishop)]) == side | blockadeB)
+                    if (Globals.mDside(board[square + (diagDir * distFromBishop)]) == side | blockadeB) //if that something is on the same side
                     {
                         tempArrayBishop[distFromBishop + (7 * timesRun)] = -1;
+                        loopingCondition = false;
                     }
                     else
                     {
@@ -55,6 +56,10 @@ public class bishop : Board
                     tempArrayBishop[distFromBishop + (7 * timesRun)] = square + (diagDir * distFromBishop);
                 }
                 if ((square + (diagDir * distFromBishop)) % 8 == 0)
+                {
+                    loopingCondition = false;
+                }
+                else if ((square + (diagDir * distFromBishop)) % 8 == 7)
                 {
                     loopingCondition = false;
                 }
