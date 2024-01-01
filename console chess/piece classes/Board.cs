@@ -50,11 +50,11 @@ namespace console_chess
             return curatedList;
         }
 
-        public void movePiece(int location)
+        public virtual void movePiece(int location)
         {
             //location is where the piece is going to, this method runs from the object that is moving
 
-            if (Globals.mDside(Globals.board[location]) != side & Globals.mDside(Globals.board[location]) != 0)
+            if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
             {
                 takePiece(location);
             }
@@ -63,7 +63,7 @@ namespace console_chess
                 Globals.board[location] = this;
             }
         }
-        private void takePiece(int location)
+        protected void takePiece(int location)
         {
             killCount += Globals.mDvalue(Globals.board[location]);
             Random random = new Random();
