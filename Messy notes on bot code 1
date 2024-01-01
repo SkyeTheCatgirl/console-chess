@@ -59,6 +59,7 @@ max value board can be is +- 114
 114+114 = 228
 228 < 256 !!! yippee
 lowest needs to be unreachable, shift by another 1, min = 1, midpoint = 115, max = 229
+amendment for extra biases, midpoint should be shifted by 3 to 5 for central bias, new midpoint = 120, new max = 234
 
 23/12/2023 12:51pm: holy fucking bingle it works!
 need to do: en passant, promotion, win condition, multi threading

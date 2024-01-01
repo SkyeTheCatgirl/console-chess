@@ -317,16 +317,37 @@ namespace console_chess
         }
         private byte altAssignValue(object[] board)
         {
-            int totalSum = 115;
+            int totalSum = 120;
             for (int i = 0; i < board.Length; i++)
             {
-                if (Globals.mDside(board[i]) == 1)
+                if (Globals.mDside(board[i]) == 1) //white
                 {
                     totalSum -= Globals.mDvalue(board[i]);
                 }
-                else if (Globals.mDside(board[i]) == 2)
+                else if (Globals.mDside(board[i]) == 2) //black
                 {
                     totalSum += Globals.mDvalue(board[i]);
+                    switch (i % 8)
+                    {
+                        default:
+                            break;
+                        case 0 or 7:
+                            totalSum -= 1;
+                            break;
+                        case 1 or 6:
+                            totalSum -= 0;
+                            break;
+                        case 2 or 5:
+                            totalSum += 1;
+                            break;
+                        case 3 or 4:
+                            totalSum += 2;
+                            break;
+                    }
+                    if (i / 8 == (3|4))
+                    {
+                        totalSum += 1;
+                    }
                 }
             }
             return Convert.ToByte(totalSum);
