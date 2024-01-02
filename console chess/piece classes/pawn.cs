@@ -66,7 +66,7 @@ public class pawn : Board
 
         return printPossibleMoves(tempArrayPawn);
     }
-    public override void movePiece(int location)
+    public override bool movePiece(int location, int currentPos)
     {
         bool taking = false; bool takingOutcome = true;
         //location is where the piece is going to, this method runs from the object that is moving
@@ -159,6 +159,7 @@ public class pawn : Board
             {
                 Globals.board[location] = this;
             }
+            return takingOutcome;
     }
     //promotions
     protected void KnightPromotion(int location)

@@ -27,6 +27,7 @@ namespace console_chess
         public static bot bot = new bot();
         public static int vcchoice; //I can't remember why i called it this, its the decision for the player playing against the computer or another player
         public static int playerColour = 1; //white plays first
+        public static int kingDead = 0; //0 = neither, 1 = white king dead, 2 = black king dead 
 
          //Funcs
          //mD = method delegate
@@ -91,16 +92,16 @@ namespace console_chess
                     return emptyList;
                 }
             };
-        public static Func<object, object[],  object> movePiece = (obj, param) =>
+        public static Func<object, object[],  bool> movePiece = (obj, param) =>
             {
                 if (obj != null)
                 {
                     MethodInfo method = obj.GetType().GetMethod("movePiece");
-                    return method.Invoke(obj, param);
+                    return Convert.ToBoolean(method.Invoke(obj, param));
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             };
         
@@ -230,10 +231,12 @@ namespace console_chess
             Globals.funnyStall();
             printBoard();
             Console.WriteLine();
-            while (true)
+            while (Globals.kingDead == 0)
             {
                 playerMove();
             }
+            Globals.kingDead = Globals.kingDead == 1 ? 2 : 1;
+            Console.WriteLine("The game is now over! \nPlayer {0} has conquered the other and may now claim their prize.", Globals.kingDead);
         }
         static void BotGame()
         {
@@ -243,10 +246,25 @@ namespace console_chess
             printBoard();
             Console.WriteLine();
             Console.WriteLine("Player turn");
-            while (true)
+            while (Globals.kingDead == 0)
             {
                 playerMove();
-                botMove();
+                if (Globals.playerColour > 0)
+                {
+                    botMove();
+                }
+                else
+                {
+                    Globals.playerColour = 1;
+                }
+            }
+            if (Globals.kingDead == 1)
+            {
+                Console.WriteLine("The game is now over, man has succummed to machine and all humanity is doomed.\n...\nFarewell.");
+            }
+            else
+            {
+                Console.WriteLine("The game is now over, man has won over technology and the revolution will not happen today.\nCongratulations on prolonging the takeover of robots, you may now claim your prize.");
             }
         }
 
@@ -304,10 +322,13 @@ namespace console_chess
                 if (IntSquare == item)
                 {
                     if (Globals.mDname(Globals.board[piece]) == "Pawn") {((pawn)Globals.board[piece]).hasMoved = true;}
-                    parameters = new object[1];
+                    parameters = new object[2];
                     parameters[0] = IntSquare;
-                    Globals.movePiece(Globals.board[piece], parameters);
-                    Globals.board[piece] = null;
+                    parameters[1] = piece;
+                    if (Globals.movePiece(Globals.board[piece], parameters))
+                    {
+                        Globals.board[piece] = null;
+                    }
                     endTurn();
                     return;
                 }

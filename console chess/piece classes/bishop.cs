@@ -37,7 +37,7 @@ public class bishop : Board
 
         while (loopingCondition)
         {
-            if (square + (diagDir * distFromBishop) >= 0 & (square + (diagDir * distFromBishop) < 64) && !((diagDir == (-9 | 7) && square % 8 == 0) | (diagDir == (9 | -7) && square % 8 == 7))) //if not too high and not at the left edge
+            if (square + (diagDir * distFromBishop) >= 0 & (square + (diagDir * distFromBishop) < 64) && !(((diagDir == -9 | diagDir ==  7) && square % 8 == 0) | ((diagDir == 9 | diagDir ==  7) && square % 8 == -7))) //if not too high and not at the left edge
             {
                 if (board[square + (diagDir * distFromBishop)] != null | blockadeB) //if there's something there
                 {

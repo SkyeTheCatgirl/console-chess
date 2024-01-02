@@ -51,7 +51,7 @@ public class knight : Board
 
         return printPossibleMoves(tempArrayKnight);
     }
-    public override void movePiece(int location)
+    public override bool movePiece(int location, int currentPos)
     {
         bool taking = false; bool takingOutcome = true;
         //location is where the piece is going to, this method runs from the object that is moving
@@ -65,11 +65,19 @@ public class knight : Board
         {
             Console.WriteLine("Horsey boost! Player {0} gains an extra turn!\nPress enter to continue", Globals.playerColour);
             Console.ReadLine();
-            Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;
+            if (Globals.vcchoice == 1)
+            {
+                Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;
+            }
+            else
+            {
+                Globals.playerColour = -1;
+            }
         }
         if (!taking)
         {
             Globals.board[location] = this;
         }
+        return takingOutcome;
     }
 }

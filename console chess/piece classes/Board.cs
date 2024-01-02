@@ -50,33 +50,43 @@ namespace console_chess
             return curatedList;
         }
 
-        public virtual void movePiece(int location)
+        public virtual bool movePiece(int location, int currentPos)
         {
             //location is where the piece is going to, this method runs from the object that is moving
 
             if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
             {
-                takePiece(location);
+                return takePiece(location);
             }
             else
             {
                 Globals.board[location] = this;
+                return true;
             }
         }
         protected bool takePiece(int location)
         {
+            bool successfulKill = false;
             killCount += Globals.mDvalue(Globals.board[location]);
             Random random = new Random();
             //play funny event
             //pick a number
             Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
-            if (int.Parse(Console.ReadLine()) == random.Next(1, killCount + 1))
+            if (int.Parse(Console.ReadLine()) == random.Next(1, 1))
             {
                 Globals.funnyStall();
                 Console.WriteLine("It worked!");
+                
+                if (Globals.mDid(Globals.board[location]).ToUpper() == "K")
+                {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", this.name);
+                    Console.ReadLine();
+                }
+
                 Globals.board[location] = this;
                 Thread.Sleep(1000);
-                return true;
+                successfulKill = true;
             }
             else
             {
@@ -86,6 +96,13 @@ namespace console_chess
                 Thread.Sleep(1000);
                 return false;
             }
+
+            if (successfulKill)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
