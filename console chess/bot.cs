@@ -344,7 +344,7 @@ namespace console_chess
                             totalSum += 2;
                             break;
                     }
-                    if (i / 8 == (3|4))
+                    if (i / 8 == 3 | i / 8 == 4)
                     {
                         totalSum += 1;
                     }

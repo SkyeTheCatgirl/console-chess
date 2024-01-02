@@ -63,7 +63,7 @@ namespace console_chess
                 Globals.board[location] = this;
             }
         }
-        protected void takePiece(int location)
+        protected bool takePiece(int location)
         {
             killCount += Globals.mDvalue(Globals.board[location]);
             Random random = new Random();
@@ -76,6 +76,7 @@ namespace console_chess
                 Console.WriteLine("It worked!");
                 Globals.board[location] = this;
                 Thread.Sleep(1000);
+                return true;
             }
             else
             {
@@ -83,6 +84,7 @@ namespace console_chess
                 killCount -= Globals.mDvalue(Globals.board[location]);
                 Console.WriteLine("It failed!");
                 Thread.Sleep(1000);
+                return false;
             }
         }
     }

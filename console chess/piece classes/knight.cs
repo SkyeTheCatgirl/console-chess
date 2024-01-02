@@ -51,4 +51,25 @@ public class knight : Board
 
         return printPossibleMoves(tempArrayKnight);
     }
+    public override void movePiece(int location)
+    {
+        bool taking = false; bool takingOutcome = true;
+        //location is where the piece is going to, this method runs from the object that is moving
+
+        if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
+        {
+            takingOutcome = takePiece(location);
+            taking = true;
+        }
+        if ((location / 8 == 0 | location / 8 == 7) && identifier.ToLower() == "n" && takingOutcome)
+        {
+            Console.WriteLine("Horsey boost! Player {0} gains an extra turn!\nPress enter to continue", Globals.playerColour);
+            Console.ReadLine();
+            Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;
+        }
+        if (!taking)
+        {
+            Globals.board[location] = this;
+        }
+    }
 }

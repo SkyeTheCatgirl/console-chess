@@ -68,31 +68,75 @@ public class pawn : Board
     }
     public override void movePiece(int location)
     {
+        bool taking = false; bool takingOutcome = true;
         //location is where the piece is going to, this method runs from the object that is moving
 
-            if (location / 8 == (0|7) && identifier.ToLower() == "p")
+            if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
+            {
+                takingOutcome = takePiece(location);
+                taking = true;
+            }
+            if ((location / 8 == 0 | location / 8 == 7) && identifier.ToLower() == "p" && takingOutcome)
             {
                 //promotion
-                Console.WriteLine("Your pawn's epic adventure has met it's mighty conclusion. Through it's trials\nand tribulations it has now specialised itself into a new piece and has \nthe skills necessary to pick one.");
-                Console.WriteLine("Promote to...? Knight[N] Rook[R] Bishop[B] Queen[Q] ???[?] Explosives[E] \nCorpse[C] Politician[P] Marching Band[M] Experience[X]");
+                Console.WriteLine("Your pawn's epic adventure has met it's mighty conclusion. Through it's trials \nand tribulations it has now specialised itself into a new piece and has \nthe skills necessary to pick one.");
+                Console.WriteLine("Promote to...? Knight[N] Rook[R] Bishop[B] Queen[Q] Knook[o] Knishop[I] ???[?] \nExplosives[E] Corpse[C] Politician[P] Marching Band[M] Experience[X]");
                 switch (Console.ReadLine().ToUpper())
                 {
                     default:
                         break;
                     case "N":
+                        KnightPromotion(location);
                         break;
                     case "R":
+                        RookPromotion(location);
                         break;
                     case "B":
+                        BishopPromotion(location);
                         break;
                     case "Q":
+                        QueenPromotion(location);
+                        break;
+                    case "O":
+                        KnookPromotion(location);
+                        break;
+                    case "I":
+                        KnishopPromotion(location);
                         break;
                     case "?":
+                        Random random = new Random();
+                        switch (random.Next(1,6))
+                        {
+                            default:
+                                break;
+                            case 1:
+                                KnightPromotion(location);
+                                break;
+                            case 2:
+                                RookPromotion(location);
+                                break;
+                            case 3:
+                                BishopPromotion(location);
+                                break;
+                            case 4:
+                                QueenPromotion(location);
+                                break;
+                            case 5:
+                                KnookPromotion(location);
+                                break;
+                            case 6:
+                                KnishopPromotion(location);
+                                break;
+                        }
+
                         break;
                     case "E":
-                        explosives(location);
+                        ExplosivesPromotion(location);
                         break;
                     case "C":
+                        Console.WriteLine("Unfortunately these trials have worn on the pawn and it's not going to make it. \nYour pawn is now a corpse, gross. The nearby pieces sweep it away.");
+                        Console.WriteLine("Press enter to continue");
+                        Console.ReadLine();
                         break;
                     case "P":
                         Console.WriteLine("Your newly gained politician realises that they're almost taking an active role in something and promptly flees the scene, likely to spread misinformation and hate in a bid to gain voters.\n(You lose your pawn, but maybe one day that politician will be of use?)");
@@ -101,7 +145,6 @@ public class pawn : Board
                         break;
                     case "M":
                         Console.WriteLine("From out of nowhere, a marching band appears, stomping across the board and taking your mighty pawn with them, all whilst playing a delightful tune");
-                        
                         Console.WriteLine("Press enter to continue");
                         Console.ReadLine();
                         break;
@@ -112,17 +155,37 @@ public class pawn : Board
                         break;
                 }
             }
-            else if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
-            {
-                takePiece(location);
-            }
-            else
+            else if (!taking)
             {
                 Globals.board[location] = this;
             }
     }
     //promotions
-    protected void explosives(int location)
+    protected void KnightPromotion(int location)
+    {
+        Globals.board[location] = new knight(side);
+    }
+    protected void RookPromotion(int location)
+    {
+        Globals.board[location] = new rook(side);
+    }
+    protected void BishopPromotion(int location)
+    {
+        Globals.board[location] = new bishop(side);
+    }
+    protected void QueenPromotion(int location)
+    {
+        Globals.board[location] = new queen(side);
+    }
+    protected void KnookPromotion(int location)
+    {
+        Globals.board[location] = new knook(side);
+    }
+    protected void KnishopPromotion(int location)
+    {
+        Globals.board[location] = new knishop(side);
+    }
+    protected void ExplosivesPromotion(int location)
     {
         Console.WriteLine("Your pawn transforms into neatly layered explosives, ready to cause destruction.\n(Any adjacent pieces are going to be destroyed)");
         Console.WriteLine("Say any goodbyes then press enter to continue");
