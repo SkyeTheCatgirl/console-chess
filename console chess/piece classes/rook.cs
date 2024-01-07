@@ -2,6 +2,7 @@ using console_chess;
 
 public class rook : Board
 {
+    public bool hasMoved = false;
     public rook(int input)
     {
         value = 5;
@@ -113,10 +114,5 @@ public class rook : Board
         }
 
         return printPossibleMoves(tempArrayRook);
-    }
-
-    protected List<int> validateVerticle(int square, object[] board)
-    {
-        return null;
     }
 }

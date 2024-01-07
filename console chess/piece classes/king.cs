@@ -1,7 +1,12 @@
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using console_chess;
 
 public class king : Board
 {
+    public bool hasMoved = false;
+    public bool castledleft = false;
+    public bool casltedright = false;
     public king(int input)
     {
         value = 20;
@@ -45,7 +50,24 @@ public class king : Board
             }
             Kingcounter++;
         }
+        return printPossibleMoves(tempArrayKing.Concat(castling(square, board)).ToArray());
+    }
+    public int[] castling(int square, object[] board)
+    {
+        int[] castlelocations = new int[2] {-1, -1};
 
-        return printPossibleMoves(tempArrayKing);
+        if (!hasMoved && Globals.mDid(board[(square / 8) * 8]) == "R" && !((rook)board[(square / 8) * 8]).hasMoved &&
+        board[(square / 8) * 8 + 1] == null && board[(square / 8) * 8 + 2] == null && board[(square / 8) * 8 + 3] == null)
+        //if the king hasn't moved, and the piece in the a rank on the same row as the king is a rook, and said rook hasn't moved, and there's nothing in b, c, and d rank
+        {
+            castlelocations[0] = (square / 8) * 8 + 2; //c rank on the same row as king
+        }
+        if (!hasMoved && Globals.mDid(board[(square / 8) * 8 + 7]) == "R" && !((rook)board[(square / 8) * 8 + 7]).hasMoved &&
+        board[(square / 8) * 8 + 6] == null && board[(square / 8) * 8 + 5] == null)
+        //same logic but for other side
+        {
+            castlelocations[1] = (square / 8) * 8 + 6;
+        }
+        return castlelocations;
     }
 }

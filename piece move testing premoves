@@ -118,3 +118,27 @@ g6
 h6
 b3
 a3
+
+
+//castling
+e2
+e4
+d7
+d5
+f1
+a6
+c8
+h3
+g1
+f3
+b8
+c6
+e1
+##right castling
+g1
+d8
+d6
+g1
+h1
+e8
+##left castling

@@ -322,6 +322,13 @@ namespace console_chess
                 if (IntSquare == item)
                 {
                     if (Globals.mDname(Globals.board[piece]) == "Pawn") {((pawn)Globals.board[piece]).hasMoved = true;}
+                    else if (Globals.mDname(Globals.board[piece]) == "King")
+                    {
+                        if (piece - item == 2) {((king)Globals.board[piece]).castledleft = true;}
+                        else if (piece - item == -2) {((king)Globals.board[piece]).casltedright = true;}
+                        ((king)Globals.board[piece]).hasMoved = true;
+                    }
+                    else if (Globals.mDname(Globals.board[piece]) == "Rook") {((rook)Globals.board[piece]).hasMoved = true;}
                     parameters = new object[2];
                     parameters[0] = IntSquare;
                     parameters[1] = piece;
