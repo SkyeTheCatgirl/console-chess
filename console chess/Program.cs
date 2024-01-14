@@ -278,6 +278,20 @@ namespace console_chess
             //Location of piece to move
             if (Globals.playerColour == 1) { Console.WriteLine("White's turn"); }
             else if (Globals.playerColour == 2) { Console.WriteLine("Black's turn"); }
+
+            for (int i = 24; i < 40; i++)
+            {
+                if (Globals.mDid(Globals.board[i]) == "P")
+                {
+                    if (((pawn)Globals.board[i]).en_passant(i))
+                    {
+                        Globals.board[i] = null;
+                        endTurn();
+                        return;
+                    }
+                }
+            }
+            
             Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
             square = Console.ReadLine();
 
