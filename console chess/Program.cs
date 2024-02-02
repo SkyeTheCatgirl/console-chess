@@ -1,6 +1,8 @@
 ﻿//test
 //Side 2 is black, side 1 is white
 //Notes log:
+//need to add stalemate and draws
+//
 //Fix oop, array defined as object doesn't work for calling functions
 //
 //En passant is broken
@@ -111,23 +113,23 @@ namespace console_chess
             object[] board = new object[64];
 
             //Black and White backranks
-            board[0] = new rook(1); board[7] = new rook(1);
-            board[1] = new knight(1); board[6] = new knight(1);
+            // board[0] = new rook(1); board[7] = new rook(1);
+            // board[56]  = new rook(2); board[63] = new rook(2);
+            // board[1] = new knight(1); board[6] = new knight(1);
+            // board[57]  = new knight(2); board[62]  = new knight(2);
             board[2]  = new bishop(1); board[5]  = new bishop(1);
-            board[3] = new queen(1); board[4]  = new king(1);
-            board[56]  = new rook(2); board[63] = new rook(2);
-            board[57]  = new knight(2); board[62]  = new knight(2);
             board[58]  = new bishop(2); board[61]  = new bishop(2);
+            board[3] = new queen(1); board[4]  = new king(1);
             board[59] = new queen(2); board[60] = new king(2);
-            
-            for (int i = 8; i < 16; i++)
-            {
-                board[i] = new pawn(1);
-            }
-            for (int i = 48; i < 56; i++)
-            {
-                board[i] = new pawn(2);
-            }
+
+            // for (int i = 8; i < 16; i++)
+            // {
+            //     board[i] = new pawn(1);
+            // }
+            // for (int i = 48; i < 56; i++)
+            // {
+            //     board[i] = new pawn(2);
+            // }
             return board;
         }
         public static void invalidInput()
@@ -260,9 +262,9 @@ namespace console_chess
             }
             if (Globals.kingDead == 1)
             {
-                Console.WriteLine("The game is now over, man has succummed to machine and all humanity is doomed.\n...\nFarewell.");
+                Console.WriteLine("Checkmate \nThe game is now over, man has succummed to machine and all humanity is doomed.\n...\nFarewell.");
             }
-            else
+            else if (Globals.kingDead == 2)
             {
                 Console.WriteLine("The game is now over, man has won over technology and the revolution will not happen today.\nCongratulations on prolonging the takeover of robots, you may now claim your prize.");
             }
@@ -283,7 +285,7 @@ namespace console_chess
             {
                 if (Globals.mDid(Globals.board[i]) == "P")
                 {
-                    if (((pawn)Globals.board[i]).en_passant(i))
+                    if (((pawn)Globals.board[i]).en_passant(i, false))
                     {
                         Globals.board[i] = null;
                         endTurn();
@@ -369,12 +371,23 @@ namespace console_chess
         static void botMove()
         {
             Console.WriteLine("Bots turn");
+            for (int i = 24; i < 40; i++)
+            {
+                if (Globals.mDid(Globals.board[i]) == "P")
+                {
+                    if (((pawn)Globals.board[i]).en_passant(i, true))
+                    {
+                        Globals.board[i] = null;
+                        endTurn();
+                        return;
+                    }
+                }
+            }
             Globals.bot.minimaxinitialisaiton();
             //Thread.Sleep(5000);
             endTurn();
             return;
         }
-
 
         static void endTurn()
         {

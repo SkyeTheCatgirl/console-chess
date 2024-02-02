@@ -6,7 +6,6 @@ public class pawn : Board
 {
     public bool hasMoved = false;
     public bool passantAble = false;
-    public bool doingEnPassant = false;
     public pawn(int input)
     {
         value = 1;
@@ -14,19 +13,29 @@ public class pawn : Board
         identifier = "P";
         side = input;
     }
+    public pawn(pawn input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+        hasMoved = input.hasMoved;
+        passantAble = input.passantAble;
+    }
 
     public List<int> validatepawn(int square, object[] board)
     {
         int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
 
         //moving and taking pieces
-            if (side == 1) //white
+            if (side == 1 && square > 7) //white
             {
                 //moving forward
-                if (board[square + 8] == null)
+                if (square > 7 && board[square + 8] == null)
                 {
                     tempArrayPawn[0] = square + 8;
-                    if (hasMoved == false && board[square + 16] == null)
+                    if (hasMoved == false && (square / 8) * 8 == 8 && board[square + 16] == null)
                     {
                         tempArrayPawn[1] = square + 16;
                     }
@@ -41,13 +50,13 @@ public class pawn : Board
                     tempArrayPawn[3] = square + 9;
                 }
             }
-            else if (side == 2) //black
+            else if (side == 2 && square > 7) //black
             {
                 //moving forward
                 if (board[square - 8] == null)
                 {
                     tempArrayPawn[0] = square - 8;
-                    if (hasMoved == false && board[square - 16] == null)
+                    if (hasMoved == false && (square / 8) * 8 == 48 && board[square - 16] == null)
                     {
                         tempArrayPawn[1] = square - 16;
                     }
@@ -65,51 +74,57 @@ public class pawn : Board
 
         return printPossibleMoves(tempArrayPawn);
     }
-    public bool en_passant(int square)
+    public bool en_passant(int square, bool botPlaying)
     {
+        if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
         //white
         if (side == 1)
         {
-            if (Globals.mDid(Globals.board[square - 1]) == "P" && ((pawn)Globals.board[square - 1]).passantAble)
+            if (square % 8 != 0 && Globals.playerColour == side && Globals.mDid(Globals.board[square - 1]) == "P" && ((pawn)Globals.board[square - 1]).passantAble)
             {
                 Console.WriteLine("En Passant is forced.");
                 Console.WriteLine("Press enter to En Passant");
                 Console.ReadLine();
                 movePiece(square + 7, square);
                 Globals.board[square - 1] = null;
+                if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
                 return true;
             }
-            else if (Globals.mDid(Globals.board[square + 1]) == "P" && ((pawn)Globals.board[square + 1]).passantAble)
+            else if (square % 8 != 7 && Globals.playerColour == side && Globals.mDid(Globals.board[square + 1]) == "P" && ((pawn)Globals.board[square + 1]).passantAble)
             {
                 Console.WriteLine("En Passant is forced.");
                 Console.WriteLine("Press enter to En Passant");
                 Console.ReadLine();
                 movePiece(square + 9, square);
                 Globals.board[square + 1] = null;
+                if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
                 return true;
             }
         }
         else
         {
-            if (Globals.mDid(Globals.board[square + 1]) == "P" && ((pawn)Globals.board[square + 1]).passantAble)
+            if (square % 8 != 7 && Globals.playerColour == side && Globals.mDid(Globals.board[square + 1]) == "P" && ((pawn)Globals.board[square + 1]).passantAble)
             {
                 Console.WriteLine("En Passant is forced.");
                 Console.WriteLine("Press enter to En Passant");
                 Console.ReadLine();
                 movePiece(square - 7, square);
                 Globals.board[square + 1] = null;
+                if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
                 return true;
             }
-            else if (Globals.mDid(Globals.board[square - 1]) == "P" && ((pawn)Globals.board[square - 1]).passantAble)
+            else if (square % 8 != 0 && Globals.playerColour == side && Globals.mDid(Globals.board[square - 1]) == "P" && ((pawn)Globals.board[square - 1]).passantAble)
             {
                 Console.WriteLine("En Passant is forced.");
                 Console.WriteLine("Press enter to En Passant");
                 Console.ReadLine();
                 movePiece(square - 9, square);
                 Globals.board[square - 1] = null;
+                if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
                 return true;
             }
         }
+        if (Globals.vcchoice == 2 && botPlaying) {Globals.playerColour = Globals.playerColour == 1 ? 2 : 1;}
         return false;
     }
     public override bool movePiece(int location, int currentPos)

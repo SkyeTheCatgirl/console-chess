@@ -9,6 +9,14 @@ public class knook : Board
         identifier = "O";
         side = input;
     }
+    public knook(knook input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+    }
     public List<int> validateknook(int square, object[] board)
     {
         knight knight = new knight(side);

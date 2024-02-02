@@ -14,6 +14,17 @@ public class king : Board
         identifier = "K";
         side = input;
     }
+    public king(king input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+        hasMoved = input.hasMoved;
+        castledleft = input.castledleft;
+        casltedright = input.casltedright;
+    }
     public List<int> validateking(int square, object[] board)
     {
         int[] tempArrayKing = new int[8];

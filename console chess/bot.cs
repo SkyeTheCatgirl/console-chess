@@ -9,102 +9,24 @@ namespace console_chess
     class bot
     {
         //Value piece move
-        List<byte[]> fulllist = new List<byte[]>();
         int playerColour = 1;
+        bool gameOver = false;
         public static bool botPlaying = false;
-        public void scanXMovesAhead(Int16 X) //X is one full move (comprised of two half moves, one for each player)
-        {
-            //To break it down;
-            //int[2] = array to store both value and location of each move
-            //List<int[2]> = all possible moves a piece can make and the associated value for each move
-            //List<List<int[2]>> = all pieces on a board
-            //List<List<List<int[2]>>> = all possible boards in a move
-            //LLL<int>[X] = amount of boards ahead
-            
-            playerColour = 1;
-            fulllist.Add(null);
-            // foreach (var item in allMoveValidations(Globals.board))
-            // {
-            //     if (item != null)
-            //     {
-            //         fulllist.Add(assignValue(item));
-            //     }
-            // }
-
-            fulllist.Add(null);
-            
-            // Generating next boards
-            //foreach (var item in fulllist)
-            int prevLim = 0;
-            for (int h = 0; h < (X*2) - 1; h++)
-            {
-                playerColour = playerColour == 1 ? 2 : 1; //Player colour flipper, just changes 1 to 2 and 2 to 1
-                int lim = fulllist.Count();
-                for (int i = prevLim; i < lim; i++)
-                {   
-                    byte[][] prevMoves = new byte[h + 1][];
-                    byte[] item = fulllist[i]; //for h = 0, item length 3; h++, length++
-                    byte[] index;
-                    if (i > 65535) //16 bits
-                    {
-                        index = new byte[3] {255, 255, Convert.ToByte(i > 16)};
-                    }
-                    else if (i > 255) // 8 bits
-                    {
-                        index = new byte[2] {255, Convert.ToByte(i >> 8)};
-                    }
-                    else
-                    {
-                        index = new byte[1] {Convert.ToByte(i)};
-                    }
-                    
-                    if (item != null)
-                    {
-                        byte[] subMove = item;
-                        for (int k = 0; k < h; k++)
-                        {
-                            int sumofprevmoves = 0;
-                            for (int l = 4; l < subMove.Length - 2; l++)
-                            {
-                                sumofprevmoves += subMove[l];
-                            }
-                            prevMoves[k] = fulllist[sumofprevmoves];
-                            if (fulllist[sumofprevmoves] != null)
-                            {
-                                subMove = fulllist[sumofprevmoves];
-                            }
-                        }
-                        // foreach (var item2 in allMoveValidations(generateNewBoard(item, prevMoves)))
-                        // {
-                        //     //fulllist.Add(item.Concat(assignValue(item2)).ToArray());
-                        //     fulllist.Add(assignValue(item2).Concat(index).ToArray());
-                        // }
-                    }
-                    // else if (item == null)
-                    // {
-                    //     break;
-                    // }
-                    Console.Clear();
-                    Console.WriteLine((((double)i/lim)*100) + "%");
-                    prevLim = lim;
-                }
-            }
-            Console.WriteLine(fulllist.Count());
-            
-        }
+        public object[] GlobalBoard = new object[64];
         private List<byte[]> allMoveValidations(object[] board, int start, int end) //runs move validation for every position on the board and adds it to a list
         {
             List<byte[]> list = new List<byte[]>();
             for (int i = start; i < end; i++)
             {
-                
                 //aaarg[0] is the position of the piece
                 //aaarg[1] is the position of the place the piece wants to go to
-                //aaarg[2] is the data of the piece
+                //aaarg[2] is what sides both the piece and destination are
                 object[] parameters = new object[2];
                 parameters[0] = i;
                 parameters[1] = board;
+
                 List<int> validmoves = Globals.validateMoves(board[i], parameters);
+
                 //Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
@@ -112,7 +34,6 @@ namespace console_chess
                     int item = validmoves[j];
                     if (Globals.mDside(board[i]) == playerColour)
                     {
-                        
                         //allmoves.Add(item);
                         //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
                         //convert string to byte array( id of the piece + number + side of the piece )
@@ -125,20 +46,6 @@ namespace console_chess
                 }
             }
             return list;
-        }
-        protected List<byte[]> threaded_validations(object[] board)
-        {
-            List<byte[]> list1 = new List<byte[]>();
-            List<byte[]> list2 = new List<byte[]>();
-
-            Thread _thread_1 = new Thread(() => {list1 = allMoveValidations(board, 0, 32);});
-            Thread _thread_2 = new Thread(() => {list2 = allMoveValidations(board, 32, 64);});
-
-            _thread_1.Start();_thread_2.Start();
-            _thread_1.Join();_thread_2.Join();
-
-            list1.AddRange(list2);
-            return list1;
         }
         private byte convStringToByteArray(string str)
         {
@@ -181,11 +88,39 @@ namespace console_chess
         }
         private object[] generateNewBoard(byte[] byteArray, byte[][] prevMoves)
         {
-            //object[] board = Globals.board;
+            // //object[] board = Globals.board;
             object[] board = new object[Globals.board.Length];
             for (int i = 0; i < Globals.board.Length; i++)
             {
-                board[i] = Globals.board[i];
+                switch (Globals.mDid(Globals.board[i]).ToLower())
+                {
+                    default:
+                        break;
+                    case "p":
+                        board[i] = new pawn((pawn)Globals.board[i], true);
+                        break;
+                    case "r":
+                        board[i] = new rook((rook)Globals.board[i], true);
+                        break;
+                    case "n":
+                        board[i] = new knight((knight)Globals.board[i], true);
+                        break;
+                    case "b":
+                        board[i] = new bishop((bishop)Globals.board[i], true);
+                        break;
+                    case "q":
+                        board[i] = new queen((queen)Globals.board[i], true);
+                        break;
+                    case "k":
+                        board[i] = new king((king)Globals.board[i], true);
+                        break;
+                    case "i": //knishop
+                        board[i] = new knishop((knishop)Globals.board[i], true);
+                        break;
+                    case "o": //knook
+                        board[i] = new knook((knook)Globals.board[i], true);
+                        break;
+                }
             }
 
             if (prevMoves != null)
@@ -198,47 +133,42 @@ namespace console_chess
                         board[item[1]] = board[item[0]];
                         board[item[0]] = null;
                     }
+                    if (Globals.mDname(board[item[1]]) == "Pawn") {((pawn)board[item[1]]).hasMoved = true;}
+                    if ((item[1] / 8) * 8 == 0 && Globals.mDname(board[item[1]]) == "Pawn") {board[item[1]] = new queen(2);}
                 }
             }
 
+            if (Globals.mDid(board[byteArray[1]]) == "K")
+            {
+                gameOver = true;
+            }
+            else
+            {
+                gameOver = false;
+            }
             board[byteArray[1]] = board[byteArray[0]];
             board[byteArray[0]] = null;
             return board;
         }
-        private byte[] assignValue(byte[] origMove)
-        {
-            object[] board = Globals.board;
-            byte[] value = new byte[1];
-            
-            //move with attached value
-
-            //if location is occupied and the piece occupied is a different side
-            if (origMove[2] < 8 && (origMove[2] == 16 | origMove[2] == 1))
-            {
-                value[0] = Convert.ToByte(Globals.mDvalue(origMove[1]));
-            }
-
-            return origMove.Concat(value).ToArray();
-        }
-        private object[] convByteToBoard(object[] board)
-        {
-            return null;
-            //29292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929292929
-            //bqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbqbq
-        }
         public void minimaxinitialisaiton()
         {
             botPlaying = true;
-            byte[][] test = new byte[0][];
+            byte[][] prevMove = new byte[0][];
+            int depth = 4;
             //Console.WriteLine("\n\n\n" + minimax(Globals.board, 4, 4, -1000, 1000, true, null, test));
-            byte[] nya = minimax(Globals.board, 4, 4, -1000, 1000, true, null, test);
-            Globals.board[nya[1]] = Globals.board[nya[0]];
-            Globals.board[nya[0]] = null;
+            byte[] move = minimax(Globals.board, depth, depth, -1000, 1000, true, null, prevMove);
+            if (Globals.mDid(Globals.board[move[1]]).ToUpper() == "K")
+            {
+                Globals.kingDead = 1;
+            }
+            Globals.board[move[1]] = Globals.board[move[0]];
+            Globals.board[move[0]] = null;
+            if ((move[1] / 8) * 8 == 0 && Globals.mDname(Globals.board[move[1]]) == "Pawn") {Globals.board[move[1]] = new queen(2);}
             botPlaying = false;
         }
         private byte[] minimax(object[] position, int depth, int InitalDepth, int alpha, int beta, bool maxPlayer, byte[] moveData, byte[][] prevMove)
         {
-            if (moveData != null) {fulllist.Add(moveData);}
+            //system for keeping previous moves in a branch so new boards can be correctly generated
             byte[][] prevMoves = new byte[InitalDepth - depth][];
             for (int i = 0; i < prevMove.Length; i++)
             {
@@ -246,29 +176,37 @@ namespace console_chess
             }
             if (depth < InitalDepth) {prevMoves[InitalDepth - depth - 1] = moveData;}
 
-            if (depth == 0 /* | game is over in position */)
+
+            if (depth == 0 | gameOver)
             {
-                byte[] temp = new byte[1] {altAssignValue(position)};
                 //return value of position
-                //return altAssignValue(position);
+                byte[] temp = new byte[1] {altAssignValue(position)};
                 return moveData.Concat(temp).ToArray();
             }
-            if (maxPlayer) //the bot
+            if (maxPlayer) //the bot / black
             {
-                playerColour = 2;
-                //int maxEval = -1000; //a number it'll never reach
-                //dont want bit to be signed so 115 is the new 0
-                byte[] maxEval = new byte[4] {0, 0, 0, 0}; //0 is the lowest number a bit can store and the min value of the board is 1
-                //for each next move (i.e. using allMoveValidations)
-                foreach (var child in allMoveValidations(position, 0, 64)/*threaded_validations(position)*/)
+                playerColour = 2; //sets the colour to black for move validation
+
+                byte[] maxEval = new byte[4] {0, 0, 0, 0};
+                //maxEval is the highest value move that has been calculated so far
+                //first 3 values are move data, 4th is the important one, the value of the move.
+                //The value is initially set to 0 which is intentionally a value that cannot be achieved in the game, the lowest possible value is 1.
+                //We want the initial value to be effectively -∞ so the first move calculated will always be the new best move.
+
+                //for every possible black move from the current board position
+                foreach (var child in allMoveValidations(position, 0, 64))
                 {
-                    moveData = child;
-                    //Console.Write(moveData[0]);Console.Write(moveData[1]);
+                    moveData = child; //copy over the child move to moveData
+
                     //int eval = minimax(position with next move (generate new board), depth - 1, alpha, beta, false)
                     //int eval = minimax(generateNewBoard(child, prevMoves), depth - 1, InitalDepth, alpha, beta, false, moveData, prevMoves);
                     byte[] eval = new byte[4] {moveData[0], moveData[1], moveData[2], minimax(generateNewBoard(child, prevMoves), depth - 1, InitalDepth, alpha, beta, false, moveData, prevMoves)[3]};
-                    //maxEval = max between maxEval and eval
-                    //maxEval[3] = maxEval[3] > eval[3] ? maxEval[3] : eval[3];
+                    //eval is similar to maxEval in structure, with the first 3 values being the child move data
+                    //However when setting the fourth value we chose to call minimax again, this time with the board being with the new child move (and all previous moves in the branch), the depth being 1 lower, the player being evaluated switching to white, and the child move plus previous moves being passed through.
+                    //Eventually the 4th item will be set to the value of the move, bit complex to explain in comments.
+
+
+                    //Compares which move is better, the one being evaluated or the current best move.
                     if (maxEval[3] < eval[3])
                     {
                         maxEval[0] = eval[0];
@@ -276,8 +214,11 @@ namespace console_chess
                         maxEval[2] = eval[2];
                         maxEval[3] = eval[3]; 
                     }
-                    //alpha = max between alpha and eval
-                    alpha = alpha > eval[3] ? alpha : eval[3];
+
+                    //Compares if the value of the move being evaluated is larger than alpha, and sets alpha to the value if it is
+                    alpha = alpha > eval[3] ? alpha : eval[3]; //if alpha greater than value then alpha equals alpha, else (value is greater than alpha) then alpha equals value
+                    
+                    //if beta is less than or equal to alpha, then "prune" this branch as it will never be the best move.
                     if (beta <= alpha)
                     {
                         break;
@@ -288,16 +229,14 @@ namespace console_chess
             else //the player
             {
                 playerColour = 1;
-                //int minEval = 1000; //a number it'll never reach
                 byte[] minEval = new byte[4] {0, 0, 0, 255}; //255 is the largest number a bit can store and the value of the board caps at 228
 
-                foreach (var child in allMoveValidations(position, 0, 64)/*threaded_validations(position)*/)
+                foreach (var child in allMoveValidations(position, 0, 64))
                 {
                     moveData = child;
-                    //int eval = minimax(position with next move (generate new board), depth - 1, alpha, beta, true)
                     byte[] eval = new byte[4] {moveData[0], moveData[1], moveData[2], minimax(generateNewBoard(child, prevMoves), depth - 1, InitalDepth, alpha, beta, true, moveData, prevMoves)[3]};
+                    
                     //minEval = min between minEval and eval
-                    //minEval[3] = minEval[3] < eval[3] ? minEval[3] : eval[3];
                     if (minEval[3] > eval[3])
                     {
                         minEval[0] = eval[0];
@@ -305,6 +244,7 @@ namespace console_chess
                         minEval[2] = eval[2];
                         minEval[3] = eval[3]; 
                     }
+
                     //beta = min between beta and eval
                     beta = beta < eval[3] ? beta : eval[3];
                     if (beta <= alpha)

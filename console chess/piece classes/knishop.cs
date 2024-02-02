@@ -9,6 +9,14 @@ public class knishop : Board
         identifier = "I";
         side = input;
     }
+    public knishop(knishop input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+    }
     public List<int> validateknishop(int square, object[] board)
     {
         knight knight = new knight(side);

@@ -10,6 +10,15 @@ public class rook : Board
         identifier = "R";
         side = input;
     }
+    public rook(rook input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+        hasMoved = input.hasMoved;
+    }
     public List<int> validaterook(int square, object[] board)
     {
         int[] tempArrayRook = new int[16];

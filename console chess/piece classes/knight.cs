@@ -8,7 +8,15 @@ public class knight : Board
         name = "Knight";
         identifier = "N";
         side = input;
-    } 
+    }
+    public knight(knight input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+    }
     public List<int> validateknight(int square, object[] board)
     {
         int[] tempArrayKnight = new int[8];

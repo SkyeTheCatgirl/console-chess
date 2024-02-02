@@ -9,6 +9,14 @@ public class queen : Board
         identifier = "Q";
         side = input;
     }
+    public queen(queen input, bool x)
+    {
+        value = input.value;
+        side = input.side;
+        killCount = input.killCount;
+        name = input.name;
+        identifier = input.identifier;
+    }
     public List<int> validatequeen(int square, object[] board)
     {
         bishop bishop = new bishop(side);
