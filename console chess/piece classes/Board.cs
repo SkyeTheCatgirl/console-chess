@@ -72,7 +72,7 @@ namespace console_chess
             //play funny event
             //pick a number
             Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
-            if (int.Parse(Console.ReadLine()) == random.Next(1, 1))
+            if (int.Parse(Console.ReadLine()) != random.Next(1, killCount))
             {
                 Globals.funnyStall();
                 Console.WriteLine("It worked!");

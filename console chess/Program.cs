@@ -166,9 +166,26 @@ namespace console_chess
     {
         static void Main()
         {
-            Console.WriteLine("Welcome to Skye's dumb chess NEA project");
-            Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
-            Globals.vcchoice = int.Parse(Console.ReadLine());
+            while (true)
+            {
+                Console.WriteLine("Welcome to Skye's dumb chess NEA project");
+                Console.WriteLine("Play against: \n[1] Another player \n[2] The computer \n[3] Debug");
+                try
+                {
+                    Globals.vcchoice = int.Parse(Console.ReadLine());
+                    if (!(Globals.vcchoice < 4 && Globals.vcchoice > 0))
+                    {
+                        int.Parse("a");
+                    }
+                    break;
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid Input, press enter to try again");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
+            }
             Console.Clear();
             if (Globals.vcchoice == 1) { SinglePlayerGame(); }
             else if (Globals.vcchoice == 2)
@@ -297,10 +314,24 @@ namespace console_chess
                 }
             }
             
-            Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
-            square = Console.ReadLine();
-
-            IntSquare = int.Parse(Globals.convLetterToNum(square));
+            while (true)
+            {
+                Console.WriteLine("\nPlease input the location of the piece you want to move \nPlease input just the name of the square, e.g. b2");
+                square = Console.ReadLine();
+                IntSquare = -1;
+                try
+                {
+                    IntSquare = int.Parse(Globals.convLetterToNum(square));
+                    break;
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid notation");
+                    Globals.invalidInput();
+                    if (Globals.playerColour == 1) { Console.WriteLine("White's turn"); }
+                    else if (Globals.playerColour == 2) { Console.WriteLine("Black's turn"); }
+                }
+            }
             
             if (Globals.board[IntSquare] == null)
             {
@@ -319,22 +350,48 @@ namespace console_chess
 
             Console.WriteLine("Selecting " + Globals.mDname(Globals.board[IntSquare]));
             //Destination of piece to move
-            Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
-
             piece = IntSquare;
             object[] parameters = new object[2];
             parameters[0] = IntSquare;
             parameters[1] = Globals.board;
-            lsPossibleMoves = Globals.validateMoves(Globals.board[IntSquare], parameters);
-            if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
+            while (true)
             {
-                Console.WriteLine("This piece can't move anywhere!");
-                Globals.invalidInput();
-                playerMove();
-                return;
-            }
+                Console.WriteLine("\nPlease input just the square that you want to move the piece to from the options below:");
+                lsPossibleMoves = Globals.validateMoves(Globals.board[IntSquare], parameters);
 
-            IntSquare = int.Parse(Globals.convLetterToNum(Console.ReadLine()));
+                if (lsPossibleMoves.Count() == 0) //If there's nowhere the piece can move
+                {
+                    Console.WriteLine("This piece can't move anywhere!");
+                    Globals.invalidInput();
+                    playerMove();
+                    return;
+                }
+
+                Console.WriteLine("\n Enter [q] or any square that doesn't exist (e.g. a0) to select a differnet piece.");
+
+                try
+                {
+                    string input;
+                    input = Console.ReadLine();
+                    if (input.ToLower() != "q")
+                    {
+                        IntSquare = int.Parse(Globals.convLetterToNum(input));
+                        break;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        printBoard();
+                        playerMove();
+                        return;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid notation");
+                    Globals.invalidInput();
+                }
+            }
 
             foreach (var item in lsPossibleMoves)
             {
