@@ -67,18 +67,45 @@ public class king : Board
     {
         int[] castlelocations = new int[2] {-1, -1};
 
-        if (!hasMoved && Globals.mDid(board[(square / 8) * 8]) == "R" && !((rook)board[(square / 8) * 8]).hasMoved &&
+        if (((side == 1 && square == 4) | (side == 2 && square == 60)) && 
+        !hasMoved && Globals.mDid(board[(square / 8) * 8]) == "R" && !((rook)board[(square / 8) * 8]).hasMoved &&
         board[(square / 8) * 8 + 1] == null && board[(square / 8) * 8 + 2] == null && board[(square / 8) * 8 + 3] == null)
         //if the king hasn't moved, and the piece in the a rank on the same row as the king is a rook, and said rook hasn't moved, and there's nothing in b, c, and d rank
         {
             castlelocations[0] = (square / 8) * 8 + 2; //c rank on the same row as king
         }
-        if (!hasMoved && Globals.mDid(board[(square / 8) * 8 + 7]) == "R" && !((rook)board[(square / 8) * 8 + 7]).hasMoved &&
+        if (((side == 1 && square == 4) | (side == 2 && square == 60)) && 
+        !hasMoved && Globals.mDid(board[(square / 8) * 8 + 7]) == "R" && !((rook)board[(square / 8) * 8 + 7]).hasMoved &&
         board[(square / 8) * 8 + 6] == null && board[(square / 8) * 8 + 5] == null)
         //same logic but for other side
         {
             castlelocations[1] = (square / 8) * 8 + 6;
         }
         return castlelocations;
+    }
+
+    public override bool movePiece(int location, int currentPos)
+    {
+        //location is where the piece is going to, this method runs from the object that is moving
+
+        if (Globals.mDside(Globals.board[location]) != side && Globals.mDside(Globals.board[location]) != 0)
+        {
+            return takePiece(location);
+        }
+        else
+        {
+            if (((king)Globals.board[currentPos]).castledleft)
+            {
+                Globals.board[location + 1] = Globals.board[(currentPos / 8) * 8];
+                Globals.board[(currentPos / 8) * 8] = null;
+            }
+            else if (((king)Globals.board[currentPos]).casltedright)
+            {
+                Globals.board[location - 1] = Globals.board[(currentPos / 8) * 8 + 7];
+                Globals.board[(currentPos / 8) * 8 + 7] = null;
+            }
+            Globals.board[location] = this;
+            return true;
+        }
     }
 }

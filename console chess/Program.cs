@@ -113,23 +113,26 @@ namespace console_chess
             object[] board = new object[64];
 
             //Black and White backranks
-            // board[0] = new rook(1); board[7] = new rook(1);
-            // board[56]  = new rook(2); board[63] = new rook(2);
-            // board[1] = new knight(1); board[6] = new knight(1);
-            // board[57]  = new knight(2); board[62]  = new knight(2);
+            board[0] = new rook(1); board[7] = new rook(1);
+            board[56]  = new rook(2); board[63] = new rook(2);
+
+            board[1] = new knight(1); board[6] = new knight(1);
+            board[57]  = new knight(2); board[62]  = new knight(2);
+
             board[2]  = new bishop(1); board[5]  = new bishop(1);
             board[58]  = new bishop(2); board[61]  = new bishop(2);
+
             board[3] = new queen(1); board[4]  = new king(1);
             board[59] = new queen(2); board[60] = new king(2);
 
-            // for (int i = 8; i < 16; i++)
-            // {
-            //     board[i] = new pawn(1);
-            // }
-            // for (int i = 48; i < 56; i++)
-            // {
-            //     board[i] = new pawn(2);
-            // }
+            for (int i = 8; i < 16; i++)
+            {
+                board[i] = new pawn(1);
+            }
+            for (int i = 48; i < 56; i++)
+            {
+                board[i] = new pawn(2);
+            }
             return board;
         }
         public static void invalidInput()

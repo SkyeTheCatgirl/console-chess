@@ -60,19 +60,6 @@ namespace console_chess
             }
             else
             {
-                if (Globals.mDid(Globals.board[currentPos]) == "K")
-                {
-                    if (((king)Globals.board[currentPos]).castledleft)
-                    {
-                        Globals.board[location + 1] = Globals.board[(currentPos / 8) * 8];
-                        Globals.board[(currentPos / 8) * 8] = null;
-                    }
-                    else if (((king)Globals.board[currentPos]).casltedright)
-                    {
-                        Globals.board[location - 1] = Globals.board[(currentPos / 8) * 8 + 7];
-                        Globals.board[(currentPos / 8) * 8 + 7] = null;
-                    }
-                }
                 Globals.board[location] = this;
                 return true;
             }

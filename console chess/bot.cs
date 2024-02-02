@@ -146,6 +146,19 @@ namespace console_chess
             {
                 gameOver = false;
             }
+            if (Globals.mDid(board[byteArray[0]]) == "K")
+            {
+                if (((king)board[byteArray[0]]).castledleft)
+                {
+                board[byteArray[1] + 1] = board[(byteArray[0] / 8) * 8];
+                board[(byteArray[0] / 8) * 8] = null;
+                }
+                else if (((king)board[byteArray[0]]).casltedright)
+                {
+                    board[byteArray[1] - 1] = board[(byteArray[0] / 8) * 8 + 7];
+                    board[(byteArray[0] / 8) * 8 + 7] = null;
+                }
+            }
             board[byteArray[1]] = board[byteArray[0]];
             board[byteArray[0]] = null;
             return board;
@@ -160,6 +173,19 @@ namespace console_chess
             if (Globals.mDid(Globals.board[move[1]]).ToUpper() == "K")
             {
                 Globals.kingDead = 1;
+            }
+            if (Globals.mDid(Globals.board[move[0]]) == "K")
+            {
+                if (((king)Globals.board[move[0]]).castledleft)
+                {
+                    Globals.board[move[1] + 1] = Globals.board[(move[0] / 8) * 8];
+                    Globals.board[(move[0] / 8) * 8] = null;
+                }
+                else if (((king)Globals.board[move[0]]).casltedright)
+                {
+                    Globals.board[move[1] - 1] = Globals.board[(move[0] / 8) * 8 + 7];
+                    Globals.board[(move[0] / 8) * 8 + 7] = null;
+                }
             }
             Globals.board[move[1]] = Globals.board[move[0]];
             Globals.board[move[0]] = null;
