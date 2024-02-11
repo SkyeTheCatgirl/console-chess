@@ -15,8 +15,6 @@
 //fix up moving, currently in a "which horse??" situation, make user select which piece to move and then where to, may have to include some basic move validation
 
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
 
 namespace console_chess
 {
@@ -153,7 +151,7 @@ namespace console_chess
         {
             return Convert.ToChar(number % 8 + 65).ToString().ToLower();
         }
-        public static void funnyStall()
+        public static void Loading()
         {
             for (int i = 0; i < 3; i++)
                 {
@@ -190,21 +188,16 @@ namespace console_chess
             if (Globals.vcchoice == 1) { SinglePlayerGame(); }
             else if (Globals.vcchoice == 2)
             {
-                Console.WriteLine("                                                  \r\n                        %%#                       \r\n                        %%%%%%######,             \r\n                       ...........#####*          \r\n                     ...............######        \r\n                 /#%*%*..##%%%%%.....##/          \r\n                 ,#%%%&..##%%%%%#.*#####          \r\n                   ,#/,.,,(%(,,...####            \r\n                   . .,,.. , .....%%#/            \r\n                  ..,,,,,.......,%#.,,...         \r\n               #&&&%***#%%%%,%%%%%%..,.           \r\n             .&&&&&%%%%%%%.%%%%%%%%%,             \r\n            /&&&&&%%%%%%%%%%%%%%%%%%.             \r\n            @@@&&%%%%%&&%%%%%%&&&%%,..            \r\n                &%%%%%%&&%%%%***,,,.../           \r\n                 ##.  ....*,,/%&&&%%&%%.          \r\n                   %%&%%&&%%&%%%&&%%&&%%          \r\n               .%%%%&&%%%&%%%&%%%&%%%%%%%%%%,     \r\n            .%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%, \r\n           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
-                Console.WriteLine("\nTesting");
-                Console.ReadLine();
                 BotGame();
             }
             else if (Globals.vcchoice == 3)
             {
                 Globals.bot.minimaxinitialisaiton();
-                //Globals.bot.scanXMovesAhead(3);
             }
             Console.ReadLine();
         }
         public static void printBoard()
         {
-            Random r = new Random();
             int Tside;
             int counter = 0;
             for (int i = 0; i < Globals.board.Length; i++)
@@ -215,8 +208,6 @@ namespace console_chess
                     Console.Write(" " + i / 8);
                     Console.WriteLine();
                 }
-                //Console.ForegroundColor = (ConsoleColor)r.Next(1,15);
-                //if ((counter % 16 >= 8 && counter % 2 != 0) ^ counter % 2 == 0)
                 if  (counter % 16 >= 8)
                 {
                     if (counter % 2 == 0)
@@ -250,7 +241,7 @@ namespace console_chess
         static void SinglePlayerGame()
         {
             Console.WriteLine("Starting single player game");
-            Globals.funnyStall();
+            Globals.Loading();
             printBoard();
             Console.WriteLine();
             while (Globals.kingDead == 0)
@@ -263,7 +254,7 @@ namespace console_chess
         static void BotGame()
         {
             Console.WriteLine("Starting bot game");
-            Globals.funnyStall();
+            Globals.Loading();
             Console.Clear();
             printBoard();
             Console.WriteLine();
@@ -444,7 +435,6 @@ namespace console_chess
                 }
             }
             Globals.bot.minimaxinitialisaiton();
-            //Thread.Sleep(5000);
             endTurn();
             return;
         }

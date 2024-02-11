@@ -1,9 +1,3 @@
-using System.Diagnostics.Contracts;
-using System.Formats.Tar;
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
-using System.Threading;
-
 namespace console_chess
 {
     class bot
@@ -12,61 +6,41 @@ namespace console_chess
         int playerColour = 1;
         bool gameOver = false;
         public static bool botPlaying = false;
-        public object[] GlobalBoard = new object[64];
         private List<byte[]> allMoveValidations(object[] board, int start, int end) //runs move validation for every position on the board and adds it to a list
         {
             List<byte[]> list = new List<byte[]>();
             for (int i = start; i < end; i++)
             {
-                //aaarg[0] is the position of the piece
-                //aaarg[1] is the position of the place the piece wants to go to
-                //aaarg[2] is what sides both the piece and destination are
+                //move[0] is the position of the piece
+                //move[1] is the position of the place the piece wants to go to
+                //move[2] is what sides both the piece and destination are
                 object[] parameters = new object[2];
                 parameters[0] = i;
                 parameters[1] = board;
 
                 List<int> validmoves = Globals.validateMoves(board[i], parameters);
 
-                //Console.Clear();
                 for (int j = 0; j < validmoves.Count();j++)
                 {
-                    byte[] aaarg = new byte[3];
+                    byte[] move = new byte[3];
                     int item = validmoves[j];
                     if (Globals.mDside(board[i]) == playerColour)
                     {
-                        //allmoves.Add(item);
-                        //aaarg[0] = convStringToByteArray(Globals.mDid(board[i]) + i + Globals.mDside(board[i])); //position of piece
-                        //convert string to byte array( id of the piece + number + side of the piece )
-                        aaarg[0] = Convert.ToByte(i);
-                        //aaarg[1] = convStringToByteArray(Globals.mDid(board[i]) + item.ToString() + Globals.mDside(board[i])); //destination of piece
-                        aaarg[1] = Convert.ToByte(item);
-                        aaarg[2] = convStringToByteArray(Globals.mDside(board[i]).ToString() + Globals.mDside(board[item]).ToString());
-                        list.Add(aaarg);
+                        move[0] = Convert.ToByte(i);
+                        move[1] = Convert.ToByte(item);
+                        move[2] = createMetadata(Globals.mDside(board[i]).ToString() + Globals.mDside(board[item]).ToString());
+                        list.Add(move);
                     }
                 }
             }
             return list;
         }
-        private byte convStringToByteArray(string str)
-        {
-            //REPUROSED now it splits the byte into two nibbles, the lhs stores data about the original piece, the rhs stores data about the destination
 
-            //each byte stores both side and type of piece
-            //e.g. black horsey would be 0001 0011, white bishop would be 0000 0100
+        private byte createMetadata(string str)
+        {
+            //splits the byte into two nibbles, the lhs stores data about the original piece, the rhs stores data about the destination
+
             byte tmp = 0;
-            // switch (str.Substring(0, 1).ToLower())
-            // {
-            //     default:break;
-            //     //case "empty": tmp += 0; break;
-            //     case "p": tmp += 1; break;
-            //     case "r": tmp += 2; break;
-            //     case "n": tmp += 3; break;
-            //     case "b": tmp += 4; break; 
-            //     case "q": tmp += 5; break;
-            //     case "k": tmp += 6; break;
-            //     //case "knook": tmp += 7; break;
-            //     //case "knishop": tmp += 8; break;
-            // }
             
             //lhs
             if (str.Substring(0,1) == "2") //black
@@ -86,6 +60,7 @@ namespace console_chess
 
             return tmp;
         }
+
         private object[] generateNewBoard(byte[] byteArray, byte[][] prevMoves)
         {
             // //object[] board = Globals.board;
@@ -122,7 +97,6 @@ namespace console_chess
                         break;
                 }
             }
-
             if (prevMoves != null)
             {
                 //prevMoves = prevMoves.Reverse().ToArray();
@@ -137,7 +111,6 @@ namespace console_chess
                     if ((item[1] / 8) * 8 == 0 && Globals.mDname(board[item[1]]) == "Pawn") {board[item[1]] = new queen(2);}
                 }
             }
-
             if (Globals.mDid(board[byteArray[1]]) == "K")
             {
                 gameOver = true;
@@ -163,12 +136,12 @@ namespace console_chess
             board[byteArray[0]] = null;
             return board;
         }
+
         public void minimaxinitialisaiton()
         {
             botPlaying = true;
             byte[][] prevMove = new byte[0][];
             int depth = 4;
-            //Console.WriteLine("\n\n\n" + minimax(Globals.board, 4, 4, -1000, 1000, true, null, test));
             byte[] move = minimax(Globals.board, depth, depth, -1000, 1000, true, null, prevMove);
             if (Globals.mDid(Globals.board[move[1]]).ToUpper() == "K")
             {
@@ -206,9 +179,10 @@ namespace console_chess
             if (depth == 0 | gameOver)
             {
                 //return value of position
-                byte[] temp = new byte[1] {altAssignValue(position)};
+                byte[] temp = new byte[1] {AssignValue(position)};
                 return moveData.Concat(temp).ToArray();
             }
+
             if (maxPlayer) //the bot / black
             {
                 playerColour = 2; //sets the colour to black for move validation
@@ -281,7 +255,8 @@ namespace console_chess
                 return minEval;
             }
         }
-        private byte altAssignValue(object[] board)
+
+        private byte AssignValue(object[] board)
         {
             int totalSum = 120;
             for (int i = 0; i < board.Length; i++)
@@ -310,7 +285,7 @@ namespace console_chess
                             totalSum += 2;
                             break;
                     }
-                    if (i / 8 == 3 | i / 8 == 4)
+                    if ((i / 8 == 3 | i / 8 == 4) && (i % 8 == 3 | i % 8 == 4))
                     {
                         totalSum += 1;
                     }

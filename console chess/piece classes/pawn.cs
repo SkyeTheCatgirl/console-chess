@@ -1,11 +1,10 @@
-using System.Reflection;
-using System.Runtime.InteropServices;
 using console_chess;
 
 public class pawn : Board
 {
     public bool hasMoved = false;
     public bool passantAble = false;
+
     public pawn(int input)
     {
         value = 1;
@@ -13,7 +12,7 @@ public class pawn : Board
         identifier = "P";
         side = input;
     }
-    public pawn(pawn input, bool x)
+    public pawn(pawn input, bool x) //bool is there to differ between the two constructors
     {
         value = input.value;
         side = input.side;
@@ -26,7 +25,7 @@ public class pawn : Board
 
     public List<int> validatepawn(int square, object[] board)
     {
-        int[] tempArrayPawn = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
+        int[] movesArray = new int[4] { -1, -1, -1, -1 }; //the first two places are for forward movement, the latter 2 are for taking pieces
 
         //moving and taking pieces
             if (side == 1 && square > 7) //white
@@ -34,20 +33,20 @@ public class pawn : Board
                 //moving forward
                 if (square > 7 && board[square + 8] == null)
                 {
-                    tempArrayPawn[0] = square + 8;
+                    movesArray[0] = square + 8;
                     if (hasMoved == false && (square / 8) * 8 == 8 && board[square + 16] == null)
                     {
-                        tempArrayPawn[1] = square + 16;
+                        movesArray[1] = square + 16;
                     }
                 }
         
                 if (square % 8 != 0 && Globals.mDside(board[square + 7]) == 2)
                 {
-                    tempArrayPawn[2] = square + 7;
+                    movesArray[2] = square + 7;
                 }
                 if (square % 8 != 7 && Globals.mDside(board[square + 9]) == 2)
                 {
-                    tempArrayPawn[3] = square + 9;
+                    movesArray[3] = square + 9;
                 }
             }
             else if (side == 2 && square > 7) //black
@@ -55,24 +54,24 @@ public class pawn : Board
                 //moving forward
                 if (board[square - 8] == null)
                 {
-                    tempArrayPawn[0] = square - 8;
+                    movesArray[0] = square - 8;
                     if (hasMoved == false && (square / 8) * 8 == 48 && board[square - 16] == null)
                     {
-                        tempArrayPawn[1] = square - 16;
+                        movesArray[1] = square - 16;
                     }
                 }
 
                 if (square % 8 != 7 && Globals.mDside(board[square - 7]) == 1)
                 {
-                    tempArrayPawn[2] = square - 7;
+                    movesArray[2] = square - 7;
                 }
                 if (square % 8 != 0 && Globals.mDside(board[square - 9]) == 1)
                 {
-                    tempArrayPawn[3] = square - 9;
+                    movesArray[3] = square - 9;
                 }
             }
 
-        return printPossibleMoves(tempArrayPawn);
+        return printPossibleMoves(movesArray);
     }
     public bool en_passant(int square, bool botPlaying)
     {
@@ -266,32 +265,63 @@ public class pawn : Board
         Thread.Sleep(1000); Console.WriteLine("1");
         Thread.Sleep(1000); Console.WriteLine("BOOM!");
 
+
         if (!(location - 8 < 0))
         {
             Globals.board[location - 8] = null; //up
+            if (Globals.mDid(Globals.board[location - 8]).ToUpper() == "K")
+            {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+            }
             if (!(location % 8 == 0))
             {
                 Globals.board[location - 9] = null; //up left
                 Globals.board[location - 1] = null; //left
+                if (Globals.mDid(Globals.board[location - 9]).ToUpper() == "K" || Globals.mDid(Globals.board[location - 1]).ToUpper() == "K")
+                {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+                }
             }
             if (!(location % 8 == 7))
             {
                 Globals.board[location - 7] = null; //up right
                 Globals.board[location + 1] = null; //right
+                if (Globals.mDid(Globals.board[location - 7]).ToUpper() == "K" || Globals.mDid(Globals.board[location + 1]).ToUpper() == "K")
+                {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+                }
             }
         }
         else
         {
             Globals.board[location + 8] = null; //down
+            if (Globals.mDid(Globals.board[location + 8]).ToUpper() == "K")
+            {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+            }
             if (!(location % 8 == 0))
             {
                 Globals.board[location + 7] = null; //down left
                 Globals.board[location - 1] = null; //left
+                if (Globals.mDid(Globals.board[location + 7]).ToUpper() == "K" || Globals.mDid(Globals.board[location - 1]).ToUpper() == "K")
+                {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+                }
             }
             if (!(location % 8 == 7))
             {
                 Globals.board[location + 9] = null; //down right
                 Globals.board[location + 1] = null; //right
+                if (Globals.mDid(Globals.board[location + 9]).ToUpper() == "K" || Globals.mDid(Globals.board[location + 1]).ToUpper() == "K")
+                {
+                    Globals.kingDead = side;
+                    Console.WriteLine("And in one fell swoop, your {0} executes the enemy king, ending the long and \nmiserable war.", "explosives");
+                }
             }
         }
     }

@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
-
 namespace console_chess
 {
     public class Board
@@ -68,13 +61,29 @@ namespace console_chess
         {
             bool successfulKill = false;
             killCount += Globals.mDvalue(Globals.board[location]);
+            string selection = "-1";
             Random random = new Random();
-            //play funny event
             //pick a number
-            Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount);
-            if (int.Parse(Console.ReadLine()) != random.Next(1, killCount))
+            while (true)
             {
-                Globals.funnyStall();
+                Console.WriteLine("You're trying to take a piece! \nPick a number between 1 and {0}", killCount + 2);
+                try
+                {
+                    selection = Console.ReadLine();
+                    if (int.Parse(selection) >= 1 && int.Parse(selection) <= killCount + 2)
+                    {
+                        break;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid input.");
+                    Globals.invalidInput();
+                }
+            }
+            if (int.Parse(selection) != random.Next(1, killCount + 2))
+            {
+                Globals.Loading();
                 Console.WriteLine("It worked!");
                 
                 if (Globals.mDid(Globals.board[location]).ToUpper() == "K")
@@ -90,7 +99,7 @@ namespace console_chess
             }
             else
             {
-                Globals.funnyStall();
+                Globals.Loading();
                 killCount -= Globals.mDvalue(Globals.board[location]);
                 Console.WriteLine("It failed!");
                 Thread.Sleep(1000);

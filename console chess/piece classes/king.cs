@@ -1,5 +1,3 @@
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
 using console_chess;
 
 public class king : Board
