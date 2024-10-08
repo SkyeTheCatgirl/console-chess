@@ -1,5 +1,3 @@
-A-level NEA project
+A-level NEA project for computer science
 
-its chess.
-
-thats all
+Retired project now, might revisit with better knowledge at a later date.
